@@ -5,8 +5,9 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './datetime-picker.component.html',
-  styleUrl: './datetime-picker.component.css'
+  styleUrl: './datetime-picker.component.scss'
 })
 export class CimaDatetimePickerComponent {
+
 
 }
