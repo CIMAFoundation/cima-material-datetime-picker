@@ -1,36 +1,24 @@
-<mat-form-field class="time-picker-form-field">
-  <mat-label>Time Picker</mat-label>
-  <input matInput type="text" [(ngModel)]="time">
-    <button matSuffix mat-icon-button aria-label="Time" [matMenuTriggerFor]="menu">
-      <mat-icon>schedule</mat-icon>
-    </button>
-  <mat-menu #menu="matMenu">
-    <div class="time-picker-wrapper" >
+
       <label>Select Time</label>
       <div class="input-fields-wrapper" (click)="$event.stopPropagation();">
         <!--hour-->
-        <input type="number" min="0" max="12" class="input-field" [(ngModel)]="hour">
+        <input type="number" min="0" max="12" class="input-field" [(ngModel)]="hour" (ngModelChange)="setTime()">
         <!--separator-->
         <div class="separator">
           <span>{{separator}}</span>
         </div>
         <!--minutes-->
-        <input type="number" min="0" max="59" class="input-field" [(ngModel)]="minute">
-
-
+        <input type="number" min="0" max="59" class="input-field" [(ngModel)]="minute" (ngModelChange)="setTime()">
       </div>
+
       <!--meridian selector-->
-      <div class="meridian-wrapper" (click)="$event.stopPropagation();">
-        <mat-button-toggle-group name="meridianToggle" aria-label="Meridian Toggle" [(ngModel)]="meridianTime">
-          <mat-button-toggle value="{{amLabel}}">{{amLabel}}</mat-button-toggle>
-          <mat-button-toggle value="{{amLabel}}">{{pmLabel}}</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+      @if(format === '12') {
+        <div class="meridian-wrapper" (click)="$event.stopPropagation();">
+          <mat-button-toggle-group name="meridianToggle" aria-label="Meridian Toggle" [(ngModel)]="meridianTime">
+            <mat-button-toggle value="{{amLabel}}" (click)="setMeridianTime(amLabel)">{{amLabel}}</mat-button-toggle>
+            <mat-button-toggle value="{{pmLabel}}" (click)="setMeridianTime(pmLabel)">{{pmLabel}}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      }
 
-      <div class="button-wrapper">
-        <button mat-button>{{cancelLabel}}</button>
-        <button mat-button (click)="setTime()">{{confirmLabel}}</button>
-      </div>
-    </div>
-  </mat-menu>
-</mat-form-field>
+

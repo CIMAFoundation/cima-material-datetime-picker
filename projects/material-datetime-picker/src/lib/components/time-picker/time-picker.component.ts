@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MatFormField, MatLabel, MatSuffix} from "@angular/material/form-field";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatInput} from "@angular/material/input";
@@ -29,25 +29,31 @@ import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-to
   styleUrl: './time-picker.component.scss'
 })
 export class CimaTimePickerComponent implements OnInit {
-  time: string = '';
+  @Output() time = new EventEmitter<string>();
 
   //localization
-  separator: string = ':';
-  cancelLabel: string = 'Cancel';
-  confirmLabel: string = 'OK';
-  amLabel: string = 'AM';
-  pmLabel: string = 'PM';
+  @Input() separator: string = ':';
+  @Input() amLabel: string = 'AM';
+  @Input() pmLabel: string = 'PM';
 
-  hour: number = 12;
-  minute: number = 55;
-  meridianTime: string = 'AM';
+  @Input() hour: number = 12;
+  @Input() minute: number = 55;
+  @Input() meridianTime: string = 'AM';
+
+  @Input() format: string | '12' | '24'= '12';
 
   ngOnInit() {
     this.setTime();
   }
 
+  setMeridianTime(time: string){
+this.meridianTime = time;
+    this.setTime();
+  }
+
   setTime(){
-    this.time = this.hour.toString() + this.separator + this.minute.toString();
+    //TODO: convert to 24 hour time if format is 12
+    this.time.emit(this.hour.toString() + this.separator + this.minute.toString() + ' ' + this.meridianTime);
   }
 
 
