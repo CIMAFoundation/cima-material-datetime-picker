@@ -1,10 +1,10 @@
 <mat-form-field class="time-picker-form-field">
   <mat-label>Time Picker</mat-label>
   <input matInput type="text" [(ngModel)]="time">
-  <button matSuffix mat-icon-button aria-label="Time" [matMenuTriggerFor]="menu">
+  <button matSuffix mat-icon-button aria-label="Time" [matMenuTriggerFor]="timePickerMenu">
     <mat-icon>schedule</mat-icon>
   </button>
-  <mat-menu #menu="matMenu">
+  <mat-menu #timePickerMenu="matMenu">
     <div class="time-picker-wrapper" >
 
       <cima-time-picker (time)="getTime($event)"></cima-time-picker>

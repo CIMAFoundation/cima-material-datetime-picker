@@ -52,7 +52,8 @@ this.meridianTime = time;
   }
 
   setTime(){
-    //TODO: convert to 24 hour time if format is 12
+    //TODO: convert to 24 hour time if format is 12 e rimuovere il meridianTime
+    // oppure valutare se gestire entrambi i formati - input di tipo type ha come output solo valore 24h
     this.time.emit(this.hour.toString() + this.separator + this.minute.toString() + ' ' + this.meridianTime);
   }
 

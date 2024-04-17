@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DatetimePickerComponent } from './datetime-picker.component';
+import { DatetimePickerComponent } from './date-picker.component';
 
 describe('DatetimePickerComponent', () => {
   let component: DatetimePickerComponent;
@@ -11,7 +11,7 @@ describe('DatetimePickerComponent', () => {
       imports: [DatetimePickerComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(DatetimePickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

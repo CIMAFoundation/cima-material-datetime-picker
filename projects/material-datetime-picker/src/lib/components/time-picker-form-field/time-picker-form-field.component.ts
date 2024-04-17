@@ -26,7 +26,7 @@ import {CimaTimePickerComponent} from "../time-picker/time-picker.component";
   templateUrl: './time-picker-form-field.component.html',
   styleUrl: './time-picker-form-field.component.scss'
 })
-export class CimaTimePickerFormFieldComponent {
+export class TimePickerFormFieldComponent {
   cancelLabel: string = 'Cancel';
   confirmLabel: string = 'OK';
 

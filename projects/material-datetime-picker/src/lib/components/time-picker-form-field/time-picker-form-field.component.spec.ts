@@ -11,7 +11,7 @@ describe('TimePickerFormFieldComponent', () => {
       imports: [TimePickerFormFieldComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(TimePickerFormFieldComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
