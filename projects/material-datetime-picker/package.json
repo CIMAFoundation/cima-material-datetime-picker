@@ -1,14 +1,41 @@
 {
-  "name": "material-datetime-picker",
-  "version": "0.0.1",
+  "name": "@cima-foundation/material-datetime-picker",
+  "version": "22.0.0",
+  "exports": {
+    "./theming": {
+      "sass": "./_theming.scss"
+    }
+  },
   "peerDependencies": {
-    "@angular/common": "^17.3.0",
-    "@angular/cdk": "^17.3.0",
-    "@angular/core": "^17.3.0",
-    "@angular/material": "^17.3.0"
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/material": "^22.0.0",
+    "@angular/cdk": "^22.0.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.8.1"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "description": "Angular Material date and time picker with M2/M3 themes, clock and numeric views, and Angular Forms support.",
+  "author": "CIMA Foundation",
+  "homepage": "https://github.com/CIMAFoundation/cima-material-datetime-picker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CIMAFoundation/cima-material-datetime-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CIMAFoundation/cima-material-datetime-picker/issues"
+  },
+  "keywords": [
+    "angular",
+    "angular-material",
+    "datepicker",
+    "timepicker",
+    "datetime-picker"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

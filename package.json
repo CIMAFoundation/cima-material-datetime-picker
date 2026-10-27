@@ -3,46 +3,45 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:cima-material-datetime-picker": "node dist/cima-material-datetime-picker/server/server.mjs"
+    "start": "ng serve demo",
+    "build": "ng build demo",
+    "watch": "ng build demo --watch --configuration development",
+    "test": "ng test demo",
+    "build:lib": "ng build material-datetime-picker",
+    "test:lib": "ng test material-datetime-picker",
+    "build:pages": "ng build demo --base-href /cima-material-datetime-picker/"
   },
   "private": true,
+  "packageManager": "npm@11.21.1",
   "dependencies": {
-    "@angular/animations": "^17.3.0",
-    "@angular/cdk": "^17.3.4",
-    "@angular/common": "^17.3.0",
-    "@angular/compiler": "^17.3.0",
-    "@angular/core": "^17.3.0",
-    "@angular/forms": "^17.3.0",
-    "@angular/material": "^17.3.4",
-    "@angular/material-experimental": "^17.3.4",
-    "@angular/platform-browser": "^17.3.0",
-    "@angular/platform-browser-dynamic": "^17.3.0",
-    "@angular/platform-server": "^17.3.0",
-    "@angular/router": "^17.3.0",
-    "@angular/ssr": "^17.3.4",
-    "express": "^4.18.2",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.14.3"
+    "@angular/cdk": "^22.2.4",
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
+    "@angular/material": "^22.2.4",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/router": "^22.2.3",
+    "marked": "^18.1.2",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.3.4",
-    "@angular/cli": "^17.3.4",
-    "@angular/compiler-cli": "^17.3.0",
-    "@types/express": "^4.17.17",
-    "@types/jasmine": "~5.1.0",
-    "@types/node": "^18.18.0",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "ng-packagr": "^17.3.0",
-    "typescript": "~5.4.2"
+    "@angular/build": "^22.2.4",
+    "@angular/cli": "^22.2.4",
+    "@angular/compiler-cli": "^22.2.3",
+    "jsdom": "^30.1.3",
+    "ng-packagr": "^22.2.5",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "overrides": {
+    "@angular/build": {
+      "vite": "8.3.5"
+    }
   }
 }

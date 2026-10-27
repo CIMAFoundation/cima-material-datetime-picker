@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  width: 100%;
+  color: var(--mat-sys-on-surface);
+  font-family: var(--mat-sys-body-large-font, Roboto, sans-serif);
+}
+section { padding: 24px var(--cima-time-padding-inline, 24px) 12px; }
+.heading { margin: 0 0 24px; font: var(--cima-time-heading-font, var(--mat-sys-label-medium, 500 12px/16px Roboto, sans-serif)); color: var(--mat-sys-on-surface-variant); }
+.fields { display: flex; align-items: flex-start; gap: 0; }
+.field { flex: 1; min-width: 0; text-align: center; }
+.digit, input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: var(--cima-time-field-radius, 8px);
+  background: var(--cima-time-field-background, var(--mat-sys-surface-container-highest));
+  color: inherit;
+  font: var(--cima-time-display-font, var(--mat-sys-display-large, 400 57px/64px Roboto, sans-serif));
+  text-align: center;
+  padding: 0;
+}
+.digit { cursor: pointer; }
+input { height: 72px; font: var(--cima-time-display-font, var(--mat-sys-display-large, 400 57px/64px Roboto, sans-serif)); }
+.digit.active, input:focus-visible {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+input:focus-visible { border-color: var(--mat-sys-primary); outline: none; }
+input { appearance: textfield; -moz-appearance: textfield; }
+input::-webkit-inner-spin-button, input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.separator { flex: 0 0 24px; text-align: center; font: var(--cima-time-display-font, var(--mat-sys-display-large, 400 57px/64px Roboto, sans-serif)); line-height: 80px; }
+.input-view .separator { font: var(--cima-time-display-font, var(--mat-sys-display-large, 400 57px/64px Roboto, sans-serif)); line-height: 72px; }
+.field-label { display: block; margin-top: 8px; font: var(--mat-sys-body-small, 400 12px/16px Roboto, sans-serif); color: var(--mat-sys-on-surface-variant); text-align: start; }
+.period { box-sizing: border-box; flex: 0 0 52px; height: 80px; margin-inline-start: 12px; display: flex; flex-direction: column; border: 1px solid var(--mat-sys-outline); border-radius: var(--cima-time-field-radius, 8px); overflow: hidden; }
+.period button { flex: 1; min-height: 0; width: 100%; border: 0; background: transparent; color: var(--mat-sys-on-surface-variant); font: var(--cima-time-period-font, var(--mat-sys-title-medium, 500 16px/24px Roboto, sans-serif)); cursor: pointer; }
+.input-view .period { height: 72px; }
+.period button + button { border-top: 1px solid var(--mat-sys-outline); }
+.period button[aria-pressed='true'] { background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container); }
+.clock { position: relative; width: min(100%, 256px); aspect-ratio: 1; border-radius: 50%; margin: 44px auto 24px; background: var(--cima-time-face-background, var(--mat-sys-surface-container-highest)); touch-action: none; user-select: none; cursor: pointer; }
+.tick { position: absolute; transform: translate(-50%, -50%); font: var(--mat-sys-body-large, 400 16px/24px Roboto, sans-serif); pointer-events: none; }
+.tick.inner { font: var(--mat-sys-body-medium, 400 14px/20px Roboto, sans-serif); }
+.tick.selected { color: var(--mat-sys-on-primary); }
+.hand { position: absolute; left: calc(50% - 1px); bottom: 50%; width: 2px; background: var(--mat-sys-primary); transform-origin: bottom center; pointer-events: none; }
+.hand-end { position: absolute; left: 50%; top: 0; width: 48px; height: 48px; transform: translate(-50%, -50%); background: var(--mat-sys-primary); border-radius: 50%; }
+.pivot { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; transform: translate(-50%, -50%); background: var(--mat-sys-primary); border-radius: 50%; }
+.view-switch { margin-inline-start: -12px; }
+button:focus-visible, .clock:focus-visible { outline: 2px solid var(--mat-sys-primary); outline-offset: 3px; }
+:host(.cima-time-disabled) { opacity: 0.45; }
+:host(.cima-time-disabled) .clock, button:disabled { cursor: default; }
+.with-seconds { gap: 0; }
+.with-seconds .separator { flex-basis: 16px; }
+.with-seconds .period { flex-basis: 44px; height: 64px; margin-inline-start: 8px; }
+.with-seconds .digit, .with-seconds input { font-size: 32px; height: 64px; }
+.with-seconds .separator { font-size: 32px; line-height: 60px; }
+
+
+// State layers follow the foreground color in both light and dark themes.
+.digit:not(:disabled):hover, .period button:not(:disabled):hover { box-shadow: inset 0 0 0 100px color-mix(in srgb, currentColor 8%, transparent); }
+.digit:not(:disabled):active, .period button:not(:disabled):active { box-shadow: inset 0 0 0 100px color-mix(in srgb, currentColor 12%, transparent); }
+
+// Animate settled selections and unit changes; dragging follows the pointer directly.
+.hand { transition: transform 180ms ease-out, height 180ms ease-out; }
+.clock.dragging .hand { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hand { transition: none; }
+}
+
+// Unlabelled odd-hour positions keep the 24-hour single ring readable.
+.tick.mark:not(.selected) { width: 2px; height: 6px; border-radius: 1px; background: var(--mat-sys-outline); }
+
+.clock.single-ring .hand-end { width: 32px; height: 32px; }
+
+.error { color: var(--mat-sys-error); font: var(--mat-sys-body-small); margin: 0 0 12px; }

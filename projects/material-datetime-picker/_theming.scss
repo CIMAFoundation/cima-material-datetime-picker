@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+// Bridges an existing M2 theme to the system tokens used by the timepicker.
+@mixin m2-theme($theme) {
+  @include mat.m2-theme($theme);
+  --cima-time-field-radius: 4px;
+  --cima-time-panel-radius: 4px;
+  --cima-time-panel-shadow: 0 2px 8px #0003;
+  --cima-time-face-background: #{mat.get-theme-color($theme, background, disabled-button)};
+  --cima-time-field-background: #{mat.get-theme-color($theme, background, disabled-button)};
+  // M2 display roles map to larger text than the timepicker's 56px numeric fields.
+  --cima-time-display-font: 400 56px/64px Roboto, sans-serif;
+  --cima-time-period-font: 500 16px/24px Roboto, sans-serif;
+  --cima-time-heading-font: 500 10px/16px Roboto, sans-serif;
+}

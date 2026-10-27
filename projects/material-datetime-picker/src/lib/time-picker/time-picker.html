@@ -1,0 +1,64 @@
+<section [class.input-view]="timeView() === 'input'" [attr.aria-label]="resolvedLabels().selectTime">
+  <p class="heading">{{ timeView() === 'clock' ? resolvedLabels().selectTime : resolvedLabels().enterTime }}</p>
+  @if (invalidTime()) { <p class="error" role="alert">{{ resolvedLabels().invalidTime }}</p> }
+  @else if (timeErrors()) { <p class="error" role="alert">{{ resolvedLabels().unavailableTime }}</p> }
+  <div class="fields" [class.with-seconds]="showSeconds()">
+    @for (unit of units(); track unit; let first = $first) {
+      @if (!first) { <span class="separator" aria-hidden="true">:</span> }
+      <div class="field">
+        @if (timeView() === 'input') {
+          <input type="number" inputmode="numeric" [attr.aria-label]="label(unit)"
+            [attr.aria-invalid]="!!timeErrors() || null" [value]="display(unit)" [disabled]="isDisabled()"
+            [min]="unit === 'hours' && hourCycle() === '12' ? 1 : 0"
+            [max]="unit === 'hours' ? (hourCycle() === '12' ? 12 : 23) : 59"
+            [step]="step(unit)" (change)="edit(unit, $event)" (keydown.enter)="confirmInput(unit, $event)" (focus)="activeUnit.set(unit)">
+          <span class="field-label">{{ label(unit) }}</span>
+        } @else {
+          <button type="button" class="digit" [class.active]="clockUnit() === unit"
+            [disabled]="isDisabled()" [attr.aria-label]="label(unit) + ': ' + display(unit)"
+            [attr.aria-pressed]="clockUnit() === unit" (click)="activeUnit.set(unit)">{{ display(unit) }}</button>
+        }
+      </div>
+    }
+    @if (hourCycle() === '12') {
+      <div class="period" role="group" [attr.aria-label]="resolvedLabels().period">
+        <button type="button" [disabled]="isDisabled()" [attr.aria-pressed]="time().hours < 12"
+          (click)="setPeriod(false)">{{ resolvedLabels().am }}</button>
+        <button type="button" [disabled]="isDisabled()" [attr.aria-pressed]="time().hours >= 12"
+          (click)="setPeriod(true)">{{ resolvedLabels().pm }}</button>
+      </div>
+    }
+  </div>
+  @if (timeView() === 'clock') {
+    <div class="clock" [class.single-ring]="clockUnit() === 'hours' && singleRing24()" [class.dragging]="dragging()" role="slider" [attr.tabindex]="isDisabled() ? -1 : 0"
+      [attr.aria-label]="label(clockUnit())" [attr.aria-valuemin]="0" [attr.aria-valuemax]="clockMaximum()"
+      [attr.aria-valuenow]="clockValue()" [attr.aria-valuetext]="clockValueText()"
+      [attr.aria-disabled]="isDisabled()" (keydown)="clockKey($event)"
+      (pointerdown)="point($event)" (pointermove)="point($event)" (pointerup)="finishPoint($event)"
+      (pointercancel)="cancelPoint($event)" (lostpointercapture)="cancelPoint($event)">
+      <div class="hand" [style.height]="handLength()" [style.transform]="'rotate(' + handAngle() + 'deg)'" aria-hidden="true">
+        <span class="hand-end"></span>
+      </div>
+      <span class="pivot" aria-hidden="true"></span>
+      @for (tick of clockLabels(); track $index) {
+        <span class="tick" [class.inner]="tick.inner" [class.mark]="tick.mark"
+          [style.rotate]="tick.mark && tick.value !== clockValue() ? tick.angle + 'deg' : null" [class.selected]="clockUnit() === 'hours'
+          ? (hourCycle() === '12' ? tick.value % 12 === clockValue() % 12 : tick.value === clockValue())
+          : tick.value === clockValue()" [style.left.%]="tick.x" [style.top.%]="tick.y" aria-hidden="true">{{ tick.mark && tick.value !== clockValue() ? '' : tick.label }}</span>
+      }
+    </div>
+  }
+  @if (allowViewSwitch()) {
+    <button type="button" matIconButton class="view-switch" [disabled]="isDisabled()"
+      [attr.aria-label]="timeView() === 'clock' ? resolvedLabels().switchToInput : resolvedLabels().switchToClock" (click)="switchView()">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        @if (timeView() === 'clock') {
+          <rect x="2" y="5" width="20" height="14" rx="1" />
+          <path d="M5 9h2m2 0h2m2 0h2m2 0h2M5 12h2m2 0h2m2 0h2m2 0h2M7 15h10" />
+        } @else {
+          <circle cx="12" cy="12" r="9" /><path d="M12 6v6l4 3" />
+        }
+      </svg>
+    </button>
+  }
+</section>
