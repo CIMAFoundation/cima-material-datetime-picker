@@ -1,6 +1,6 @@
 # Cima Material Datetime Picker
 
-An Angular 22 and Angular Material 22 library in development, rebuilt from scratch around Material 2 and Material 3 references.
+An Angular 22 date and time picker with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Built on Angular Material 22, with Material 2 (M2) theme support as well.
 
 ## At a glance
 

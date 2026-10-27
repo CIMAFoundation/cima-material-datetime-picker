@@ -1,5 +1,7 @@
 # @cima-foundation/material-datetime-picker
 
+An Angular date and time picker with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Material 2 (M2) themes are also supported.
+
 Version 22.0.0 targets Angular 22 and Angular Material 22. The major version follows Angular.
 
 `CimaTimePicker` provides numeric and clock views, 12/24-hour display, optional seconds, configurable 24-hour ring layouts, Angular Forms support, and global/local translations. M2 and M3 visual themes are supported on Material 22.
