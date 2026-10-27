@@ -1,4 +1,4 @@
-import { booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnDestroy, OnInit, output } from '@angular/core';
+import { booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { DateAdapter, ThemePalette } from '@angular/material/core';
@@ -45,8 +45,8 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   private rawText: string | null = null;
   private editBase: Date | null = null;
   private date: Date | null = null;
-  private inputDisabled = false;
-  private formDisabled = false;
+  private readonly inputDisabled = signal(false);
+  private readonly formDisabled = signal(false);
   invalid = false;
   private minimum: Date | null = null;
   private maximum: Date | null = null;
@@ -79,10 +79,10 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   get value(): Date | null { return this.date ? this.adapter.clone(this.date) : null; }
   set value(value: Date | null) { this.writeValue(value); }
 
-  /** Combines explicit input disabling with Angular Forms' disabled state. */
+  /** Reactively shares explicit and Angular Forms disabling with the picker and toggle. */
   @Input({ transform: booleanAttribute })
-  get disabled(): boolean { return this.inputDisabled || this.formDisabled; }
-  set disabled(value: boolean) { this.inputDisabled = value; this.refresh(); }
+  get disabled(): boolean { return this.inputDisabled() || this.formDisabled(); }
+  set disabled(value: boolean) { this.inputDisabled.set(value); this.refresh(); }
 
   /** Sets an inclusive date-only lower limit without changing the selected value. */
   @Input()
@@ -222,7 +222,7 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   registerOnTouched(callback: () => void): void { this.onTouched = callback; }
 
   /** Applies disabled changes from Angular Forms, cancelling a pending session if needed. */
-  setDisabledState(disabled: boolean): void { this.formDisabled = disabled; this.refresh(); }
+  setDisabledState(disabled: boolean): void { this.formDisabled.set(disabled); this.refresh(); }
 
   /** Formats both date and time using the app's native Material date adapter. */
   refresh(): void {

@@ -173,6 +173,29 @@ describe('Public datetime control', () => {
     host.picker.close();
   });
 
+  it('opens from the toggle after enabling an initially disabled form control', async () => {
+    const fixture = TestBed.createComponent(DatetimeHost);
+    const host = fixture.componentInstance;
+    host.control.disable();
+    fixture.detectChanges();
+    const toggle = fixture.nativeElement.querySelector('cima-datetime-picker-toggle button') as HTMLButtonElement;
+    expect(toggle.disabled).toBe(true);
+
+    host.control.enable();
+    await fixture.whenStable();
+    expect(toggle.disabled).toBe(false);
+    toggle.click();
+    await fixture.whenStable();
+    expect(host.picker.isOpen()).toBe(true);
+    host.picker.close();
+    await fixture.whenStable();
+
+    host.control.disable();
+    await fixture.whenStable();
+    expect(toggle.disabled).toBe(true);
+    expect(host.picker.nativeCalendar.disabled).toBe(true);
+  });
+
   it('reports invalid native Date values without formatting them or changing the form model', () => {
     const fixture = TestBed.createComponent(DatetimeHost);
     fixture.detectChanges();
