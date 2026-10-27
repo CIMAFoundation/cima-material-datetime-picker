@@ -1,6 +1,6 @@
 # @cima-foundation/material-datetime-picker
 
-Version 22.0.0 targets Angular 22 and Angular Material 22. The major version follows Angular. This release is being prepared locally and has not been published.
+Version 22.0.0 targets Angular 22 and Angular Material 22. The major version follows Angular.
 
 `CimaTimePicker` provides numeric and clock views, 12/24-hour display, optional seconds, configurable 24-hour ring layouts, Angular Forms support, and global/local translations. M2 and M3 visual themes are supported on Material 22.
 
@@ -27,8 +27,6 @@ Import the standalone `CimaTimePicker` component and `FormsModule` for this exam
 
 ## Installation
 
-Once version 22.0.0 is published:
-
 ```sh
 npm install @cima-foundation/material-datetime-picker@22.0.0
 ```
@@ -43,7 +41,7 @@ For M2 themes, import the Sass bridge after Angular Material:
 @use '@cima-foundation/material-datetime-picker/theming' as cima;
 ```
 
-See the theming guide for the complete setup. For local testing before publication, follow the getting started guide.
+See the theming guide for the complete setup. For local testing, follow the getting started guide.
 
 ## Guides
 
@@ -60,4 +58,8 @@ See the theming guide for the complete setup. For local testing before publicati
 
 Run `npm start` from the repository root for the live examples. The datetime input, picker, and toggle are public library controls. The standalone time-input popup, input, and toggle are public too. Both external inputs support strict local manual parsing, Forms validation, and a replaceable `CimaInputFormats` service. See the guides for precision, confirmation, increments, and controlled opening.
 
-The guide links target the source repository. License selection and final release review remain pending before publication.
+The guide links target the source repository.
+
+## License
+
+MIT © 2026 CIMA Foundation. See LICENSE.

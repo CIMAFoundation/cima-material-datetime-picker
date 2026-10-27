@@ -2,7 +2,7 @@
 
 ## Current scope
 
-The public library targets Angular, Angular Forms, Material, and CDK 22. The demo and guides are English-first. The package is still in development and is not ready for publication.
+The public library targets Angular, Angular Forms, Material, and CDK 22. The demo and guides are English-first. The first npm release is version 22.0.0, licensed under MIT. The verification limits below still apply.
 
 The core timepicker has unit coverage for time values, forms, localization, pointer interaction, dial layouts, and selection completion. Demo tests cover locale changes, popup drafts, confirmation, cancellation, and optional actions. Browser checks have exercised both visual themes and the main popup workflows. These checks are not a full accessibility, browser, or mobile certification.
 
@@ -71,7 +71,7 @@ This checklist separates implemented features from decisions that still need to 
 
 1. Complete accessibility, keyboard/screen-reader, mobile, RTL, and theme verification.
 2. Assess additional adapter/calendar formats and application timezone requirements.
-3. Optimize demo/style budgets and finish packaging/license/release review before publication.
+3. Optimize demo/style budgets.
 
 Ranges are deliberately excluded from this milestone. No package or site is published by the verification commands.
 

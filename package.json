@@ -9,7 +9,8 @@
     "test": "ng test demo",
     "build:lib": "ng build material-datetime-picker",
     "test:lib": "ng test material-datetime-picker",
-    "build:pages": "ng build demo --base-href /cima-material-datetime-picker/"
+    "build:pages": "ng build demo --base-href /cima-material-datetime-picker/",
+    "release": "node scripts/release.mjs"
   },
   "private": true,
   "packageManager": "npm@11.21.1",

@@ -19,7 +19,7 @@
   "sideEffects": false,
   "description": "Angular Material date and time picker with M2/M3 themes, clock and numeric views, and Angular Forms support.",
   "author": "CIMA Foundation",
-  "homepage": "https://github.com/CIMAFoundation/cima-material-datetime-picker#readme",
+  "homepage": "https://cimafoundation.github.io/cima-material-datetime-picker/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CIMAFoundation/cima-material-datetime-picker.git"
@@ -37,5 +37,6 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  }
+  },
+  "license": "MIT"
 }
