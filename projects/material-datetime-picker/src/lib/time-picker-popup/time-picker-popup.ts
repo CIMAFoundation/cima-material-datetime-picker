@@ -40,10 +40,10 @@ let nextId = 0;
   styles: `
     :host { display: none; }
     .panel { width: 328px; max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); overflow-y: auto;
-      border-radius: var(--cima-time-panel-radius, 28px); background: var(--mat-sys-surface-container-high);
-      color: var(--mat-sys-on-surface); box-shadow: var(--cima-time-panel-shadow, var(--mat-sys-level3)); }
+      border-radius: var(--cima-time-panel-radius, 28px); background: var(--mat-sys-surface-container-high, #f7f2fa);
+      color: var(--mat-sys-on-surface, #1d1b20); box-shadow: var(--cima-time-panel-shadow, var(--mat-sys-level3, 0 4px 12px #0003)); }
     .actions { display: flex; justify-content: flex-end; gap: 8px; padding: 8px;
-      border-top: 1px solid var(--mat-sys-outline-variant); }
+      border-top: 1px solid var(--mat-sys-outline-variant, #cac4d0); }
   `,
 })
 export class CimaTimePickerPopup implements OnChanges, OnDestroy {

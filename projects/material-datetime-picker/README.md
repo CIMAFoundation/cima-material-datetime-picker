@@ -37,10 +37,15 @@ npm install @cima-foundation/material-datetime-picker@22.0.0
 import { CimaTimePicker } from '@cima-foundation/material-datetime-picker';
 ```
 
-For M2 themes, import the Sass bridge after Angular Material:
+For M2 themes, include the recommended Sass bridge alongside the application’s Material theme:
 
 ```scss
 @use '@cima-foundation/material-datetime-picker/theming' as cima;
+
+// $theme is the application's M2 theme.
+html {
+  @include cima.m2-theme($theme);
+}
 ```
 
 See the theming guide for the complete setup. For local testing, follow the getting started guide.

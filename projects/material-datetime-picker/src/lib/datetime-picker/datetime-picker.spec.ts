@@ -30,10 +30,11 @@ class CustomHeader {}
       [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="timeFilter()"
       [minDateTime]="minimumDateTime()" [maxDateTime]="maximumDateTime()">
     <cima-datetime-picker-toggle matIconSuffix [for]="picker" />
-    <cima-datetime-picker #picker timeView="input" [(opened)]="opened" [calendarHeaderComponent]="customHeader" />
+    <cima-datetime-picker #picker timeView="input" [panelClass]="panelClass()" [(opened)]="opened" [calendarHeaderComponent]="customHeader" />
   </mat-form-field>`,
 })
 class DatetimeHost {
+  readonly panelClass = signal<string | string[]>([]);
   readonly opened = signal(false);
   readonly minimumTime = signal<CimaTime | null>(null);
   readonly maximumTime = signal<CimaTime | null>(null);
@@ -62,6 +63,26 @@ class ModelHost {
 }
 
 describe('Public datetime control', () => {
+  it('shares panelClass with the calendar and time content, including updates and arrays', async () => {
+    const fixture = TestBed.createComponent(DatetimeHost);
+    fixture.detectChanges();
+    const picker = fixture.componentInstance.picker;
+    fixture.componentInstance.panelClass.set('m2-theme');
+    fixture.detectChanges();
+    picker.open();
+    await fixture.whenStable();
+    const overlay = TestBed.inject(OverlayContainer).getContainerElement();
+    expect(overlay.querySelector('mat-calendar.m2-theme')).not.toBeNull();
+    expect(overlay.querySelector('.content.m2-theme cima-time-picker')).not.toBeNull();
+    expect(overlay.querySelector('.content.m2-theme [matDatepickerApply]')).not.toBeNull();
+    fixture.componentInstance.panelClass.set(['other-theme', 'custom-picker']);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(overlay.querySelector('.content.other-theme.custom-picker')).not.toBeNull();
+    expect(overlay.querySelector('.content.m2-theme')).toBeNull();
+    picker.close();
+  });
+
   it('formats an initial complete value without mutating the Date or marking the form dirty', () => {
     const fixture = TestBed.createComponent(DatetimeHost);
     fixture.detectChanges();

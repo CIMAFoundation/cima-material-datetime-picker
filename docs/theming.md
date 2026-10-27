@@ -35,9 +35,14 @@ The timepicker reads the generated system tokens. Color roles follow the referen
 
 ## Material 2 setup
 
-Define an M2 theme before using the bridge shown above:
+The recommended setup uses the CIMA bridge to integrate the application's M2 colors, typography and corner radii. Importing the Sass module alone does not emit styles. A complete global stylesheet is:
 
 ```scss
+@use '@angular/material' as mat;
+@use '@cima-foundation/material-datetime-picker/theming' as cima;
+
+@include mat.core();
+
 $theme: mat.m2-define-light-theme((
   color: (
     primary: mat.m2-define-palette(mat.$m2-indigo-palette),
@@ -46,11 +51,33 @@ $theme: mat.m2-define-light-theme((
   typography: mat.m2-define-typography-config(),
   density: 0,
 ));
+
+html {
+  @include mat.all-component-themes($theme);
+  @include cima.m2-theme($theme);
+}
 ```
 
-The demo includes M2 styles only for the Material components it renders, keeping the full component catalog out of its global CSS. Applications can use `all-component-themes` as above or include the individual component theme mixins they need.
+Use `mat.m2-define-dark-theme` for an M2 dark theme. Include `mat.core()` only once in the application.
 
-The bridge maps the M2 theme to system tokens and provides timepicker-specific typography, backgrounds, and corner radii. It does not add support for older Angular versions.
+For scoped themes, put both theme includes inside the theme class instead of `html`, and make that class available on the CDK overlay container. Alternatively, a picker-specific bridge can be scoped directly to a global class:
+
+```scss
+.picker-m2 {
+  @include cima.m2-theme($theme);
+}
+```
+
+```html
+<cima-datetime-picker #picker panelClass="picker-m2" />
+<cima-time-picker-popup #timePopup panelClass="picker-m2" />
+```
+
+The application must still theme its Material components. For the datetime picker, `panelClass` is applied to both the Material calendar and the time/actions content: these are siblings, so a class on the calendar alone cannot theme the time controls. The time-only popup applies the class to its outer panel. The official `mat.m2-theme($theme)` also supplies system tokens; the CIMA bridge additionally adjusts the timepicker's typography, backgrounds and radii.
+
+Without system tokens, the picker uses local fallback colors for its own surfaces, text, selection and focus. Custom `--cima-time-*` values retain precedence, followed by Material system tokens and finally the fallbacks. These defaults provide a readable light palette; use the bridge to match an application's M2 light or dark palette. The library does not install a global application theme or theme other Material components automatically.
+
+The demo includes M2 styles only for the Material components it renders. Applications can use `all-component-themes` as above or individual component theme mixins. The bridge does not add support for older Angular versions.
 
 ## CSS customization
 
@@ -72,7 +99,7 @@ The datetime demo overrides only the content's horizontal padding because Materi
 
 A theme class on the application root does not automatically reach the CDK overlay container. Apply the relevant class to the container returned by `OverlayContainer.getContainerElement()` as well. The demo uses this public API to switch M2/M3 styles for popups.
 
-Dark-theme and RTL behavior have not yet received a complete verification pass. The hand animation respects `prefers-reduced-motion`.
+RTL behavior has not yet received a complete verification pass. The hand animation respects `prefers-reduced-motion`.
 
 ---
 

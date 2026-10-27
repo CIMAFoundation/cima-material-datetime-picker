@@ -4,7 +4,7 @@
   (opened)="onOpened()" (closed)="onClosed()" (yearSelected)="yearSelected.emit($event)"
   (monthSelected)="monthSelected.emit($event)" (viewChanged)="viewChanged.emit($event)">
   <mat-datepicker-actions>
-    <div class="content">
+    <div class="content" [class]="panelClass">
       <mat-divider />
       <cima-time-picker [(value)]="draftTime" [hourCycle]="hourCycle" [hourDial]="hourDial"
         [minTime]="timeConstraints.minTime" [maxTime]="timeConstraints.maxTime" [timeFilter]="timeConstraints.timeFilter"
