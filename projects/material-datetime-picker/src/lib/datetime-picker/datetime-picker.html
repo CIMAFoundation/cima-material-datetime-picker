@@ -5,14 +5,16 @@
   (monthSelected)="monthSelected.emit($event)" (viewChanged)="viewChanged.emit($event)">
   <mat-datepicker-actions>
     <div class="content" [class]="panelClass">
-      <mat-divider />
-      <cima-time-picker [(value)]="draftTime" [hourCycle]="hourCycle" [hourDial]="hourDial"
-        [minTime]="timeConstraints.minTime" [maxTime]="timeConstraints.maxTime" [timeFilter]="timeConstraints.timeFilter"
-        [hourStep]="hourStep" [minuteStep]="minuteStep" [secondStep]="secondStep" [labels]="labels"
-        [timeView]="timeView" [allowViewSwitch]="allowViewSwitch" [showSeconds]="showSeconds" />
-      @if (showDraftError) {
-        <p class="error" role="alert">{{ intl.unavailableTime }}</p>
-      }
+      <div class="time-content">
+        <mat-divider />
+        <cima-time-picker [(value)]="draftTime" [hourCycle]="hourCycle" [hourDial]="hourDial"
+          [minTime]="timeConstraints.minTime" [maxTime]="timeConstraints.maxTime" [timeFilter]="timeConstraints.timeFilter"
+          [hourStep]="hourStep" [minuteStep]="minuteStep" [secondStep]="secondStep" [labels]="labels"
+          [timeView]="timeView" [allowViewSwitch]="allowViewSwitch" [showSeconds]="showSeconds" />
+        @if (showDraftError) {
+          <p class="error" role="alert">{{ intl.unavailableTime }}</p>
+        }
+      </div>
       <div class="actions">
         <mat-divider />
         <button type="button" matButton matDatepickerCancel>{{ intl.cancel }}</button>
