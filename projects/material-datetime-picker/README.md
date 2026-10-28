@@ -16,6 +16,10 @@ Choose a combined date and time picker or embed the time picker on its own. Swit
 | --- | --- |
 | <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/datetime-light.png" alt="Material date and time popup with the calendar and numeric time input set to 14:30" width="294"> | <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/time-dark.png" alt="Standalone time picker in the dark theme with a single-ring 24-hour clock dial" width="294"> |
 
+| Date + time · 12-hour numeric input · PM | Standalone time · 12-hour dial · AM |
+| --- | --- |
+| <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/datetime-12h-light.png" alt="Light datetime popup showing 02:30 PM with the AM/PM selector" width="294"> | <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/time-12h-dark.png" alt="Dark time picker showing 07:00 AM with a 12-hour clock dial and AM/PM selector" width="294"> |
+
 ```html
 <cima-time-picker
   [(ngModel)]="time"
