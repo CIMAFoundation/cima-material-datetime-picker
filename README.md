@@ -1,10 +1,18 @@
 # Cima Material Datetime Picker
 
-An Angular 22 date and time picker with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Built on Angular Material 22, with Material 2 (M2) theme support as well.
+Angular 22 date, time, and **datetime range pickers** with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Built on Angular Material 22, with Material 2 (M2) theme support as well.
 
 ## At a glance
 
-Choose a combined date and time picker or embed the time picker on its own. Switch between numeric input and a clock dial, with light and dark Material themes.
+Select a datetime range, choose a single date and time, or embed the time picker on its own. Switch between numeric input and clock dials, with light and dark Material themes.
+
+### Datetime range · horizontal layout
+
+<img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/datetime-range-horizontal.jpg" alt="Horizontal datetime range picker showing start October 19, 2026 at 09:00, a highlighted calendar range, and end October 22, 2026 at 17:00" width="960">
+
+A range calendar between start and end time controls, with a compact vertical layout for mobile. Includes a read-only Material input, Angular Forms integration, inclusive datetime bounds, and explicit OK/Cancel confirmation. Numeric and clock views are supported. See the [datetime range guide](docs/datetime-range.md) for setup and API details.
+
+### Single datetime and time pickers
 
 | Date + time · numeric input · light | Standalone time · 24-hour dial · dark |
 | --- | --- |
@@ -50,13 +58,15 @@ Configure an Angular Material theme using the [theming guide](docs/theming.md). 
 
 ## Features
 
+- Datetime range picker with a range calendar, start/end time controls, responsive horizontal/vertical layouts, and atomic confirmation.
 - Inline time picker, standalone time-input popup, and combined datetime input, picker, and toggle.
+- Hour-only selection with visible disabled minutes, across time, datetime, and datetime ranges.
 - Numeric input and clock dial views, 12/24-hour display, optional seconds, and configurable time increments.
 - Angular Forms integration, strict localized manual input, and validation errors.
 - Date, time, and complete datetime bounds and filters, including overnight time windows.
-- Material 2/3 themes and global or local translations.
+- Material 2/3 themes and included English, Italian, French, German, and Spanish translations, with English fallback and local overrides.
 
-Datetime controls share a native `Date` value; time-only controls use `{ hours, minutes, seconds }`. Range selection is outside the current scope.
+Datetime controls share a native `Date` value; time-only controls use `{ hours, minutes, seconds }`. The [datetime range picker](docs/datetime-range.md) uses `{ start, end }` Date endpoints with a responsive calendar and two time controls.
 
 ## Documentation
 
@@ -66,6 +76,7 @@ Datetime controls share a native `Date` value; time-only controls use `{ hours, 
 - [API reference](docs/api.md)
 - [Forms and values](docs/forms.md)
 - [Datetime controls](docs/datetime.md)
+- [Datetime range](docs/datetime-range.md)
 - [Time input and popup](docs/popups.md)
 - [Manual input and custom formats](docs/parsing.md)
 - [Theming](docs/theming.md)

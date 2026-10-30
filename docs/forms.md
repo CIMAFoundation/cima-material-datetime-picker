@@ -72,7 +72,7 @@ Import `signal` from `@angular/core`, and `CimaTime` and `CimaTimePicker` from t
 
 `Validators.required` works with the null/non-null value. The built-in validator adds `{ invalidTime: true }` when a non-null model value contains out-of-range, fractional, or missing time fields. For example, `{ hours: 25, minutes: 0, seconds: 0 }` remains in the model but makes the control invalid. Resetting to null clears `invalidTime`; required validation still applies. The same guard rejects invalid direct value bindings in the display.
 
-The time-only component also validates recurring `minTime`, `maxTime`, and `timeFilter`, including overnight windows; see [API reference](api.md). Date-only and full datetime constraints are available on the separate [datetime input](datetime.md). Ranges remain pending. External [time and datetime inputs](parsing.md) expose dedicated text parsing errors; the inline numeric fields retain their existing edit behavior. An invalid numeric edit is restored rather than exposed as a form parsing error. Numeric changes update the bound value immediately. A time popup without actions applies valid edits to the form immediately; with actions, edits remain provisional until OK. Enter on the last field completes selection, while blur to AM/PM or a popup action does not.
+The time-only component also validates recurring `minTime`, `maxTime`, and `timeFilter`, including overnight windows; see [API reference](api.md). Date-only and full datetime constraints are available on the separate [datetime input](datetime.md). Datetime intervals are supported by the separate [range picker](datetime-range.md). External [time and datetime inputs](parsing.md) expose dedicated text parsing errors; the inline numeric fields retain their existing edit behavior. An invalid numeric edit is restored rather than exposed as a form parsing error. Numeric changes update the bound value immediately. A time popup without actions applies valid edits to the form immediately; with actions, edits remain provisional until OK. Enter on the last field completes selection, while blur to AM/PM or a popup action does not.
 
 A null value shows a starting 00:00 display (12:00 AM in 12-hour mode) without setting the control's value. Hidden seconds are preserved; hiding the field does not round them to zero.
 
@@ -90,3 +90,7 @@ See the [live example source](https://github.com/CIMAFoundation/cima-material-da
 ---
 
 [Documentation index](README.md) · [API reference](api.md) · [Project status](status.md)
+
+## Hour-only precision
+
+`precision="hours"` is supported by inline time, time popup, datetime, and datetime range controls. Minutes remain visible/disabled; user edits yield exact hours. External values are not silently rounded and receive `timePrecision`, `cimaDatetimePickerPrecision`, or `cimaDatetimeRangePrecision` if unaligned. Default full precision preserves existing hidden-second behavior. See [Hour-only precision](api.md#hour-only-precision) for examples and completion behavior.

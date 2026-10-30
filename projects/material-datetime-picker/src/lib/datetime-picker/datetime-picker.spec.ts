@@ -115,6 +115,19 @@ describe('Public datetime control', () => {
     expect(events).toHaveBeenCalledOnce();
   });
 
+  it('applies exact hours and validates unaligned external dates in hour-only mode', async () => {
+    const fixture = TestBed.createComponent(DatetimeHost); fixture.detectChanges();
+    const host = fixture.componentInstance;
+    host.picker.precision = 'hours'; host.picker.ngOnChanges({});
+    expect(host.control.hasError('cimaDatetimePickerPrecision')).toBe(true);
+    host.picker.open(); await fixture.whenStable();
+    expect(host.picker.draftTime()?.minutes).toBe(0);
+    expect(host.picker.draftTime()?.seconds).toBe(0);
+    (document.querySelector('[matDatepickerApply]') as HTMLButtonElement).click(); await fixture.whenStable();
+    expect(host.control.value?.getMinutes()).toBe(0); expect(host.control.value?.getSeconds()).toBe(0);
+    expect(host.control.valid).toBe(true);
+  });
+
   it('applies time-only edits on OK even when the calendar date is unchanged', async () => {
     const fixture = TestBed.createComponent(DatetimeHost);
     fixture.detectChanges();

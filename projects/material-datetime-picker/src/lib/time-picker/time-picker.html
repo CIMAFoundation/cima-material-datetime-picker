@@ -2,20 +2,20 @@
   <p class="heading">{{ timeView() === 'clock' ? resolvedLabels().selectTime : resolvedLabels().enterTime }}</p>
   @if (invalidTime()) { <p class="error" role="alert">{{ resolvedLabels().invalidTime }}</p> }
   @else if (timeErrors()) { <p class="error" role="alert">{{ resolvedLabels().unavailableTime }}</p> }
-  <div class="fields" [class.with-seconds]="showSeconds()">
+  <div class="fields" [class.with-seconds]="secondsVisible()">
     @for (unit of units(); track unit; let first = $first) {
       @if (!first) { <span class="separator" aria-hidden="true">:</span> }
       <div class="field">
         @if (timeView() === 'input') {
           <input type="text" inputmode="numeric" pattern="[0-9]*" [attr.cdkFocusInitial]="first ? '' : null" [attr.aria-label]="label(unit)"
-            [attr.aria-invalid]="!!timeErrors() || null" [value]="display(unit)" [disabled]="isDisabled()"
+            [attr.aria-invalid]="!!timeErrors() || null" [value]="display(unit)" [disabled]="unitDisabled(unit)"
             [min]="unit === 'hours' && hourCycle() === '12' ? 1 : 0"
             [max]="unit === 'hours' ? (hourCycle() === '12' ? 12 : 23) : 59"
             [step]="step(unit)" (input)="typeUnit(unit, $event)" (click)="selectField(unit, $event)" (change)="edit(unit, $event)" (keydown.enter)="confirmInput(unit, $event)" (focus)="selectField(unit, $event)">
           <span class="field-label">{{ label(unit) }}</span>
         } @else {
           <button type="button" class="digit" [attr.cdkFocusInitial]="first ? '' : null" [class.active]="clockUnit() === unit"
-            [disabled]="isDisabled()" [attr.aria-label]="label(unit) + ': ' + display(unit)"
+            [disabled]="unitDisabled(unit)" [attr.aria-label]="label(unit) + ': ' + display(unit)"
             [attr.aria-pressed]="clockUnit() === unit" (click)="activeUnit.set(unit)">{{ display(unit) }}</button>
         }
       </div>

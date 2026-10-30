@@ -45,7 +45,7 @@ Import `MatFormFieldModule`, `MatInputModule`, `ReactiveFormsModule`, the three 
 
 ## Custom formats
 
-`CimaInputFormats` is a public injectable service. Its methods are `formatDate`, `formatTime`, `formatDatetime`, `parseTime`, and `parseDatetime`. Parsing returns the canonical value or null. The input handles blank text and distinguishes it from parsing failure. `CimaInputFormatOptions` contains `adapter: DateAdapter<Date>`, `hourCycle`, and `showSeconds`; passing the input's adapter supports component-scoped adapter providers and runtime locale changes without capturing an unrelated root adapter.
+`CimaInputFormats` is a public injectable service. Its methods are `formatDate`, `formatTime`, `formatDatetime`, `parseTime`, and `parseDatetime`. Parsing returns the canonical value or null. The input handles blank text and distinguishes it from parsing failure. `CimaInputFormatOptions` contains `adapter: DateAdapter<Date>`, `hourCycle`, and `showSeconds`, plus optional `precision` (`full` by default); passing the input's adapter supports component-scoped adapter providers and runtime locale changes without capturing an unrelated root adapter.
 
 Override formatting and parsing together. For example, an application can require an explicit leading marker on a time-only input:
 
@@ -75,3 +75,7 @@ export class MarkedTimeFormats extends CimaInputFormats {
 `formatDatetime` calls `formatTime`, and `parseDatetime` calls `parseTime`, so a time customization also applies inside datetime strings. Custom date formats should override `formatDatetime` and `parseDatetime` together. Service methods must not mutate supplied values or throw for ordinary invalid input. The library does not interpret Moment-style format tokens or replace `MAT_DATE_FORMATS`.
 
 [Documentation index](README.md) · [Datetime control](datetime.md) · [Time popup](popups.md)
+
+## Hour-only inputs
+
+With `precision="hours"`, editable time/datetime inputs retain localized date/time syntax but accept only zero minutes, and seconds must be omitted even when `showSeconds` is configured. Examples: `14:00`, `02:00 PM`, or `10/27/2026 02:00 PM` in US English. Previous hidden seconds are reset to zero on successful user parsing. Off-hour manual text is a parse error. Programmatic non-hour-aligned values are retained and reported as precision validation errors. Custom `CimaInputFormats` implementations receive `options.precision` and should honor it. The range field is always readonly and has no text parsing.

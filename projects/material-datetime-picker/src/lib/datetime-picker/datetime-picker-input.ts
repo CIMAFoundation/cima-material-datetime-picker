@@ -1,4 +1,4 @@
-import { booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnDestroy, OnInit, output, signal } from '@angular/core';
+import { AfterViewInit, Renderer2, booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { DateAdapter, ThemePalette } from '@angular/material/core';
@@ -27,16 +27,17 @@ export interface CimaDatetimeInputEvent {
   host: {
     '[readOnly]': 'readonly', '[disabled]': 'disabled', '[attr.aria-haspopup]': '"dialog"',
     '[attr.aria-expanded]': 'picker.isOpen()', '[attr.aria-invalid]': 'errors ? true : null',
-    '(blur)': 'onBlur()', '(keydown)': 'onKeydown($event)', '(input)': 'onInput()', '(change)': 'onNativeChange()',
+    '(blur)': 'onBlur()', '(keydown)': 'onKeydown($event)', '(click)': 'onClick()', '(input)': 'onInput()', '(change)': 'onNativeChange()',
   },
 })
-export class CimaDatetimePickerInput implements ControlValueAccessor, Validator, MatDatepickerControl<Date>, OnInit, OnDestroy {
+export class CimaDatetimePickerInput implements AfterViewInit, ControlValueAccessor, Validator, MatDatepickerControl<Date>, OnInit, OnDestroy {
   @Input({ required: true, alias: 'cimaDatetimePicker' }) picker!: CimaDatetimePicker;
   readonly dateInput = output<CimaDatetimeInputEvent>();
   readonly dateChange = output<CimaDatetimeInputEvent>();
   readonly stateChanges = new Subject<void>();
   readonly element = inject<ElementRef<HTMLInputElement>>(ElementRef);
   private readonly adapter = inject<DateAdapter<Date>>(DateAdapter);
+  private readonly renderer = inject(Renderer2);
   private readonly formField = inject(MatFormField, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
   private readonly formats = inject(CimaInputFormats);
@@ -71,7 +72,7 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
 
   /** Supplies the locally provided adapter without capturing it in a root-level service. */
   private get formatOptions() {
-    return { adapter: this.adapter, hourCycle: this.picker.hourCycle, showSeconds: this.picker.showSeconds };
+    return { adapter: this.adapter, hourCycle: this.picker.hourCycle, showSeconds: this.picker.showSeconds && this.picker.precision !== 'hours', precision: this.picker.precision };
   }
 
   /** Exposes a copy so callers cannot mutate the selected date in place. */
@@ -154,6 +155,12 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   /** Registers the directive with its associated picker. */
   ngOnInit(): void { this.picker.registerInput(this); this.refresh(); }
 
+  /** Opens readonly inputs from the whole Material field, including its empty padding. */
+  ngAfterViewInit(): void {
+    const origin = this.formField?.getConnectedOverlayOrigin().nativeElement;
+    if (origin) this.destroyRef.onDestroy(this.renderer.listen(origin, 'click', () => this.onClick()));
+  }
+
   /** Cancels an open session and completes the native input-state stream. */
   ngOnDestroy(): void { this.picker?.unregisterInput(this); this.stateChanges.complete(); }
 
@@ -204,7 +211,8 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
       errors['cimaDatetimePickerMaxDateTime'] = { max: this.adapter.clone(this.maximumDateTime), actual: this.adapter.clone(value) };
     }
     const time = { hours: this.adapter.getHours(value), minutes: this.adapter.getMinutes(value), seconds: this.adapter.getSeconds(value) };
-    const timeErrors = validateTime(time, { minTime: this.minTime, maxTime: this.maxTime, timeFilter: this.timeFilter });
+    const timeErrors = validateTime(time, { precision: this.picker.precision, minTime: this.minTime, maxTime: this.maxTime, timeFilter: this.timeFilter });
+    if (timeErrors?.['timePrecision'] || (this.picker.precision === 'hours' && value.getMilliseconds() !== 0)) errors['cimaDatetimePickerPrecision'] = true;
     if (timeErrors?.['timeMin']) errors['cimaDatetimePickerMinTime'] = true;
     if (timeErrors?.['timeMax']) errors['cimaDatetimePickerMaxTime'] = true;
     if (timeErrors?.['timeRange']) errors['cimaDatetimePickerTimeRange'] = true;
@@ -227,6 +235,7 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   /** Formats both date and time using the app's native Material date adapter. */
   refresh(): void {
     this.element.nativeElement.value = this.rawText ?? (this.date ? this.formats.formatDatetime(this.date, this.formatOptions) : '');
+    this.onValidatorChange();
     this.element.nativeElement.disabled = this.disabled;
     this.stateChanges.next();
     if (this.disabled) this.picker?.close();
@@ -277,9 +286,13 @@ export class CimaDatetimePickerInput implements ControlValueAccessor, Validator,
   /** Marks input blur or a completed picker session as touched. */
   markTouched(): void { this.onTouched(); }
 
-  /** Supports Material's Alt+ArrowDown shortcut without intercepting normal form keys. */
+  /** Opens read-only fields on click while editable fields retain normal caret placement. */
+  onClick(): void { if (this.readonly && !this.disabled) this.picker.open(); }
+
+  /** Supports Material's shortcut and direct Enter/ArrowDown opening for read-only fields. */
   onKeydown(event: KeyboardEvent): void {
-    if (event.altKey && event.key === 'ArrowDown' && !this.disabled) {
+    if (!this.disabled && ((event.altKey && event.key === 'ArrowDown')
+      || (this.readonly && ['Enter', 'ArrowDown'].includes(event.key)))) {
       event.preventDefault();
       this.picker.open();
     }

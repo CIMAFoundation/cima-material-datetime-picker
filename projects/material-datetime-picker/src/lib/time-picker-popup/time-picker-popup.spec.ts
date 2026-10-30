@@ -116,6 +116,19 @@ describe('Public time input and popup', () => {
     expect(control.hasError('required')).toBe(true);
   });
 
+  it('auto-confirms after the hour in hour-only mode and keeps minutes disabled', async () => {
+    const fixture = TestBed.createComponent(PopupHost); fixture.detectChanges();
+    const { popup, control } = fixture.componentInstance;
+    popup.precision = 'hours'; popup.ngOnChanges();
+    expect(control.hasError('timePrecision')).toBe(true);
+    popup.open(); await fixture.whenStable();
+    const inputs = TestBed.inject(OverlayContainer).getContainerElement().querySelectorAll<HTMLInputElement>('input');
+    expect(inputs).toHaveLength(2); expect(inputs[1].disabled).toBe(true); expect(inputs[1].value).toBe('00');
+    inputs[0].value = '09'; inputs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await fixture.whenStable();
+    expect(control.value).toEqual({ hours: 9, minutes: 0, seconds: 0 }); expect(popup.isOpen()).toBe(false);
+  });
+
   it('keeps a separate draft, cancels on Escape and restores trigger focus', async () => {
     const fixture = TestBed.createComponent(PopupHost); fixture.detectChanges();
     const { popup, control } = fixture.componentInstance;

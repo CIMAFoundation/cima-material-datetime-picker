@@ -16,6 +16,45 @@ class FormHost {
 }
 
 describe('CimaTimePicker', () => {
+  it('keeps minutes visible but disabled and hides seconds in hour-only numeric mode', () => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('precision', 'hours');
+    fixture.componentRef.setInput('timeView', 'input');
+    fixture.componentRef.setInput('showSeconds', true);
+    fixture.componentInstance.writeValue({ hours: 7, minutes: 15, seconds: 32 }); fixture.detectChanges();
+    const picker = fixture.componentInstance;
+    const inputs = fixture.nativeElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
+    expect(inputs).toHaveLength(2); expect(inputs[1].disabled).toBe(true); expect(inputs[1].value).toBe('00');
+    expect(picker.validate(new FormControl(picker.value()))).toEqual({ timePrecision: true });
+    inputs[0].value = '09'; inputs[0].dispatchEvent(new Event('input')); fixture.detectChanges();
+    expect(picker.value()).toEqual({ hours: 9, minutes: 0, seconds: 0 });
+    expect(picker.clockUnit()).toBe('hours');
+    const complete = vi.fn(); picker.selectionComplete.subscribe(complete);
+    inputs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(complete).toHaveBeenCalledWith({ hours: 9, minutes: 0, seconds: 0 });
+  });
+
+  it.each(['single-ring', 'dual-ring'] as const)('completes hour-only dial selection without advancing on %s', hourDial => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('precision', 'hours'); fixture.componentRef.setInput('hourDial', hourDial);
+    const picker = fixture.componentInstance;
+    const complete = vi.fn(); picker.selectionComplete.subscribe(complete);
+    dialPointer(picker).tap(182, 100);
+    expect(picker.clockUnit()).toBe('hours');
+    expect(picker.value()?.minutes).toBe(0); expect(picker.value()?.seconds).toBe(0);
+    expect(complete).toHaveBeenCalledOnce();
+    picker.activeUnit.set('minutes'); expect(picker.clockUnit()).toBe('hours');
+  });
+
+  it('preserves AM/PM selection and exact hours in hour-only mode', () => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('precision', 'hours'); fixture.componentRef.setInput('hourCycle', '12');
+    const picker = fixture.componentInstance; picker.writeValue({ hours: 3, minutes: 45, seconds: 20 });
+    picker.setPeriod(true);
+    expect(picker.value()).toEqual({ hours: 15, minutes: 0, seconds: 0 });
+    expect(picker.display('hours')).toBe('03');
+  });
+
   it('revalidates daily rules without replacing the form value or hiding its digits', async () => {
     const fixture = TestBed.createComponent(FormHost);
     fixture.detectChanges();

@@ -71,6 +71,7 @@ Selector: `cima-time-picker-popup`. Export: `cimaTimePickerPopup`. One input can
 | --- | --- | --- |
 | `timeView` | `'clock'` | Initial clock or numeric view |
 | `hourCycle`, `hourDial` | `'24'`, `'dual-ring'` | Same display options as inline time content |
+| `precision` | `'full'` | `'hours'` keeps minutes visible and disabled at 00, hides seconds, and limits selection to exact hours |
 | `showSeconds`, `allowViewSwitch` | false, true | Visible precision and view switch |
 | `hourStep`, `minuteStep`, `secondStep` | 1 | Interaction increments, not validation constraints |
 | `labels` | `{}` | Partial local `CimaTimeLabels` overrides |
@@ -94,3 +95,11 @@ Daily constraints are shared by input validation and popup confirmation. Invalid
 For combined date and time, use the original Material panel through the [public datetime controls](datetime.md).
 
 [Documentation index](README.md) · [API reference](api.md) · [Project status](status.md)
+
+## Localization
+
+Included English, Italian, French, German, and Spanish text translations are selected with `CimaTimepickerIntl.setLocale(locale)`, resolving the exact locale, base language, then English. Configure `DateAdapter.setLocale(locale)` independently for formatted values and parsing. Partial `labels` input overrides retain precedence. The playground interface always remains English. See [Localization](internationalization.md) for complete setup and persistent service overrides.
+
+## Exact-hour selection
+
+Set `precision="hours"` to edit/select hours only, with visible disabled minutes at 00 and hidden seconds. It overrides `showSeconds`. `precision="full"` is the default. AM/PM stays available. Form values supplied by the application are preserved and validated if not aligned to an exact hour; user edits/confirmation zero minutes and seconds. See [Hour-only precision](api.md#hour-only-precision) for completion behavior, validation, and examples.

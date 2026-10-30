@@ -71,3 +71,7 @@ Configure a [theme](theming.md) before checking its appearance. Continue with [F
 ---
 
 [Documentation index](README.md) · [API reference](api.md) · [Project status](status.md)
+
+## Optional localization
+
+The initial labels are English. To select the included English, Italian, French, German, or Spanish translations, coordinate `CimaTimepickerIntl.setLocale(locale)`, `DateAdapter.setLocale(locale)`, and the exported calendar dictionaries. Unsupported languages fall back to English text without changing the requested date locale. See [Localization and translations](internationalization.md) for the complete startup/runtime example and application overrides. This applies to time, datetime, and datetime range controls.

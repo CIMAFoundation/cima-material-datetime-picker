@@ -35,12 +35,44 @@ describe('App', () => {
     const selected = new Date(2026, 9, 20, 14, 30);
     app.appointment.setValue(selected);
     app.timeControl.setValue({ hours: 14, minutes: 30, seconds: 0 });
-    app.setLanguage('en');
+    app.setLocalization('en-US');
     fixture.detectChanges();
     expect(app.timeIntl.enterTime).toBe('Enter time');
     expect(app.appointment.value).toBe(selected);
     expect(app.timeControl.value).toEqual({ hours: 14, minutes: 30, seconds: 0 });
     expect(app.hourCycle()).toBe('12');
+  });
+
+  it('keeps the playground English while localizing picker labels and formats', async () => {
+    const fixture = TestBed.createComponent(App); fixture.detectChanges();
+    const app = fixture.componentInstance;
+    app.setLocalization('it-IT'); await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Localization');
+    expect(fixture.nativeElement.textContent).toContain('Range layout');
+    expect(fixture.nativeElement.textContent).not.toContain('Disposizione intervallo');
+    expect(app.timeIntl.rangeStart).toBe('Inizio');
+    expect(app.datetimeExample).toContain('27/10/2026');
+    app.setLocalization('en-US'); expect(app.datetimeExample).toContain('10/27/2026');
+    app.setLocalization('en-GB'); expect(app.datetimeExample).toContain('27/10/2026');
+    app.setLocalization('pt-BR'); expect(app.timeIntl.rangeStart).toBe('Start');
+    expect(app.datetimeExample).toContain('27/10/2026');
+  });
+
+  it('applies hour-only precision to examples, hints and generated snippets', async () => {
+    const fixture = TestBed.createComponent(App); fixture.detectChanges();
+    const app = fixture.componentInstance;
+    app.precision.set('hours'); app.showSeconds.set(true); app.popupTimeView.set('input');
+    await fixture.whenStable();
+    for (const picker of fixture.nativeElement.querySelectorAll('cima-time-picker') as NodeListOf<HTMLElement>) {
+      const fields = picker.querySelectorAll('.field');
+      expect(fields).toHaveLength(2);
+      expect((fields[1].querySelector('input,button') as HTMLInputElement).disabled).toBe(true);
+    }
+    expect(app.datetimeExample).toContain('02:00');
+    expect(app.datetimeCode()).toContain('precision="hours"'); expect(app.popupCode()).toContain('precision="hours"');
+    app.popup.open(); await fixture.whenStable();
+    const inputs = TestBed.inject(OverlayContainer).getContainerElement().querySelectorAll('input');
+    expect(inputs).toHaveLength(2); expect(inputs[1].disabled).toBe(true);
   });
 
   it('uses the public popup API and propagates confirmed values into its form', async () => {
@@ -52,6 +84,22 @@ describe('App', () => {
     app.popup.complete({ hours: 14, minutes: 30, seconds: 0 });
     expect(app.popupControl.value).toEqual({ hours: 14, minutes: 30, seconds: 0 });
     expect(app.popup.isOpen()).toBe(false);
+  });
+
+  it('makes both popup inputs readonly and opens them on click', async () => {
+    const fixture = TestBed.createComponent(App); fixture.detectChanges();
+    fixture.componentInstance.readonlyInputs.set(true); await fixture.whenStable();
+    const datetime = fixture.nativeElement.querySelectorAll('.example input')[0] as HTMLInputElement;
+    const time = fixture.nativeElement.querySelectorAll('.example input')[1] as HTMLInputElement;
+    expect(datetime.readOnly).toBe(true);
+    expect(time.readOnly).toBe(true);
+    (time.closest('mat-form-field')!.querySelector('.mat-mdc-text-field-wrapper') as HTMLElement).click();
+    await fixture.whenStable();
+    expect(fixture.componentInstance.popup.isOpen()).toBe(true);
+    fixture.componentInstance.popup.close(); await fixture.whenStable();
+    (datetime.closest('mat-form-field')!.querySelector('.mat-mdc-text-field-wrapper') as HTMLElement).click();
+    await fixture.whenStable();
+    expect(datetime.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('shows localized parsing errors without losing the text entered in the demo', async () => {

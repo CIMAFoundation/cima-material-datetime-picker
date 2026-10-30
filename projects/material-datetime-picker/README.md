@@ -1,16 +1,26 @@
 # @cima-foundation/material-datetime-picker
 
-An Angular date and time picker with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Material 2 (M2) themes are also supported.
+Angular date, time, and **datetime range pickers** with **Material 3 (M3)** light and dark themes, numeric input, and clock dial views. Material 2 (M2) themes are also supported.
 
-Version 22.0.0 targets Angular 22 and Angular Material 22. The major version follows Angular.
+Targets Angular 22 and Angular Material 22. The major version follows Angular.
 
-`CimaTimePicker` provides numeric and clock views, 12/24-hour display, optional seconds, configurable 24-hour ring layouts, Angular Forms support, and global/local translations. M2 and M3 visual themes are supported on Material 22.
+`CimaTimePicker` provides numeric and clock views, 12/24-hour display, optional seconds, configurable 24-hour ring layouts, Angular Forms support, and included English, Italian, French, German, and Spanish translations with English fallback and global/local overrides. M2 and M3 visual themes are supported on Material 22.
+
+Use `precision="hours"` on time, datetime, or range pickers for exact-hour selection: minutes stay visible but disabled at 00, seconds are hidden, and the dial selects hours only. The default `precision="full"` retains minute and optional-second selection.
 
 Daily `minTime`, `maxTime`, and `timeFilter` constraints support inclusive and overnight windows. The datetime input also supports `minDateTime` and `maxDateTime`; confirmation requires the complete pending date and time to satisfy every constraint. See the API and datetime guides for examples and validation errors.
 
 ## At a glance
 
-Choose a combined date and time picker or embed the time picker on its own. Switch between numeric input and a clock dial, with light and dark Material themes.
+Select a datetime range, choose a single date and time, or embed the time picker on its own. Switch between numeric input and clock dials, with light and dark Material themes.
+
+### Datetime range · horizontal layout
+
+<img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/datetime-range-horizontal.jpg" alt="Horizontal datetime range picker showing start October 19, 2026 at 09:00, a highlighted calendar range, and end October 22, 2026 at 17:00" width="960">
+
+A range calendar between start and end time controls, with a compact vertical layout for mobile. Includes a read-only Material input, Angular Forms integration, inclusive datetime bounds, and explicit OK/Cancel confirmation. Numeric and clock views are supported. See the [datetime range guide](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/datetime-range.md) for setup and API details.
+
+### Single datetime and time pickers
 
 | Date + time · numeric input · light | Standalone time · 24-hour dial · dark |
 | --- | --- |
@@ -36,7 +46,7 @@ Import the standalone `CimaTimePicker` component and `FormsModule` for this exam
 Available on [npm](https://www.npmjs.com/package/@cima-foundation/material-datetime-picker).
 
 ```sh
-npm install @cima-foundation/material-datetime-picker@22.0.0
+npm install @cima-foundation/material-datetime-picker
 ```
 
 ```typescript
@@ -56,6 +66,8 @@ html {
 
 See the theming guide for the complete setup. For local testing, follow the getting started guide.
 
+The standalone `CimaDatetimeRangePicker` combines a range calendar and two time controls, with responsive layouts, Angular Forms integration, and explicit confirmation.
+
 ## Guides
 
 - [Documentation index](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/README.md)
@@ -63,6 +75,7 @@ See the theming guide for the complete setup. For local testing, follow the gett
 - [Getting started](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/getting-started.md)
 - [API reference](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/api.md)
 - [Forms and values](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/forms.md)
+- [Datetime range](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/datetime-range.md)
 - [Datetime input, picker, and toggle](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/datetime.md)
 - [Time input and popup API](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/popups.md)
 - [Manual input and custom formats](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/parsing.md)

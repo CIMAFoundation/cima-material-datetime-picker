@@ -11,7 +11,7 @@ The core timepicker has unit coverage for time values, forms, localization, poin
 - Public time and datetime inputs support manual localized text entry and popup selection.
 - Default parsing targets native Date, numeric Gregorian dates, Latin digits, and explicit 12/24-hour formats. Other adapters/calendars and specialized formats require a custom service and verification.
 - There is no timezone conversion or configurable DST ambiguity policy. Manual parsing rejects nonexistent local times; popup confirmation uses native adapter normalization.
-- Date-only, recurring-time, and full-datetime constraints are implemented. Ranges remain outside the current scope.
+- Date-only, recurring-time, and full-datetime constraints are implemented. A first [datetime range picker](datetime-range.md) supports responsive layouts, complete datetime bounds, and explicit confirmation.
 - Steps are interaction increments, not validation constraints.
 - The single-ring 24-hour dial and seconds are library extensions to the Material reference behavior.
 - Full keyboard/screen-reader, mobile, RTL, and dark-theme audits remain open.
@@ -31,7 +31,7 @@ This checklist separates implemented features from decisions that still need to 
 - [x] Numeric popup completion requires Enter; AM/PM and cancellation remain editable without premature confirmation.
 - [x] M2/M3 themes with separate typography and corner radii.
 - [x] Global `CimaTimepickerIntl`, partial local overrides, and runtime language switching.
-- [x] English/Italian demo coordinated with `DateAdapter` and `MatDatepickerIntl`.
+- [x] English-only playground with six Localization options, coordinated adapter/calendar labels, five included translation languages, and English fallback.
 - [x] `ngModel` and Reactive Forms examples with reset, required, and disabled state.
 - [x] Demo below the original calendar, dividers, and Material Apply/Cancel buttons.
 - [x] Manual verification of datetime confirmation and cancellation in the demo.
@@ -49,7 +49,7 @@ This checklist separates implemented features from decisions that still need to 
 - [x] Strict time/datetime manual parsing, locale-aware formats, dedicated parse errors, precision policy, and replaceable `CimaInputFormats` for native Date.
 - [x] Datetime time increments and partial local time labels connected to selection content.
 - [ ] Verify alternative adapters and additional calendar/numeral systems.
-- [ ] Datetime ranges based on Material's range model.
+- [x] Initial datetime range picker using Material's range calendar and explicit confirmation.
 - [x] Public standalone time input, anchored dialog, toggle, Forms validation, optional actions, and automatic final-unit confirmation.
 - [x] Inline time content remains reusable independently of the popup.
 - [ ] Full accessibility, mobile, RTL, and dark-theme verification.
@@ -60,10 +60,10 @@ This checklist separates implemented features from decisions that still need to 
 
 ## Verification of this milestone
 
-- 98 library tests and 7 demo/documentation tests pass (105 total).
+- 141 library tests and 10 demo/documentation tests pass (151 total).
 - Library tests run with `TZ=Europe/Rome`, including spring-gap rejection and native autumn repeated-time handling.
 - Added integration coverage for text events, parse versus constraint errors, required/reset/disabled, hidden seconds, runtime locale, custom format providers, ngModel, popup drafts, backdrop/Escape/focus, explicit and automatic numeric confirmation, writable opened state, pending select(), Material options, touch UI, labels, and increments.
-- Library and demo production builds succeed. The demo budget limits are unchanged; scoped standalone imports and M2 styles for the components actually used keep the initial bundle at 916.15 kB.
+- Library package compilation succeeds. Demo templates compile through its test target; the latest localization checks do not repeat the production demo build.
 - Browser smoke checks cover invalid/valid manual entry in English/Italian, public popup opening, numeric Enter completion, optional actions, focus restoration, M3 light, and M2 dark. These are targeted checks, not a full accessibility or device audit.
 - The original Material closed event can precede its final focus-restoration timer; lifecycle tests allow that native cleanup to complete before immediate programmatic reopening.
 
@@ -73,7 +73,7 @@ This checklist separates implemented features from decisions that still need to 
 2. Assess additional adapter/calendar formats and application timezone requirements.
 3. Optimize demo/style budgets.
 
-Ranges are deliberately excluded from this milestone. No package or site is published by the verification commands.
+The initial range control is available; mobile, visual, and accessibility refinement continues. No package or site is published by the verification commands.
 
 ---
 

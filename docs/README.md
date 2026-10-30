@@ -10,11 +10,13 @@ Cima Material Datetime Picker is an Angular 22 / Angular Material 22 library in 
 4. [Time input and popup](popups.md): public anchored time input and optional confirmation actions.
 5. [Manual input and formats](parsing.md): strict locale parsing, precision, errors, and custom formatting.
 
+6. [Datetime range](datetime-range.md): responsive range calendar, start/end times, and atomic confirmation.
+
 ## Reference and customization
 
-- [API reference](api.md): selector, value types, inputs, outputs, and interaction rules.
+- [API reference](api.md): selector, value types, hour-only precision, inputs, outputs, and interaction rules.
 - [Theming](theming.md): Material 2/3 setup, overlays, and supported CSS variables.
-- [Internationalization](internationalization.md): global labels, local overrides, and runtime language switching.
+- [Internationalization](internationalization.md): included translations, locale fallback, application overrides, and runtime localization.
 - [Project status](status.md): implemented features, limitations, accessibility coverage, and remaining work.
 
 ## Contributing and maintenance
@@ -31,7 +33,7 @@ Cima Material Datetime Picker is an Angular 22 / Angular Material 22 library in 
 
 The combined datetime input, picker, and toggle are public library APIs using the original Material datepicker panel. The standalone time input, popup, and toggle are also public APIs built with CDK Overlay. Both external inputs support manual entry; the inline component remains reusable without an input or popup.
 
-Run `npm start` from the repository root to explore the live demo, including the source snippets below its popup examples. The demo starts in English and includes Italian translation examples.
+Run `npm start` from the repository root to explore the live demo, including the source snippets below its popup examples. The demo interface always stays English. Its Localization selector offers en-US, en-GB, it-IT, fr-FR, de-DE, and es-ES for picker formats and internal labels.
 
 ---
 

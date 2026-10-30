@@ -1,4 +1,4 @@
-import { booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnChanges, OnDestroy, OnInit, output, signal } from '@angular/core';
+import { AfterViewInit, Renderer2, booleanAttribute, DestroyRef, Directive, ElementRef, forwardRef, inject, Input, OnChanges, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
@@ -29,7 +29,7 @@ export interface CimaTimeInputEvent {
     '(blur)': 'onBlur()', '(keydown)': 'onKeydown($event)', '(click)': 'onClick()',
   },
 })
-export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnInit, OnChanges, OnDestroy {
+export class CimaTimePickerInput implements AfterViewInit, ControlValueAccessor, Validator, OnInit, OnChanges, OnDestroy {
   @Input({ required: true, alias: 'cimaTimePicker' }) picker!: CimaTimePickerPopup;
   @Input({ transform: booleanAttribute }) readonly = false;
   private readonly inputDisabled = signal(false);
@@ -43,6 +43,7 @@ export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnI
   readonly timeInput = output<CimaTimeInputEvent>();
   readonly timeChange = output<CimaTimeInputEvent>();
   readonly element = inject<ElementRef<HTMLInputElement>>(ElementRef);
+  private readonly renderer = inject(Renderer2);
   private readonly formField = inject(MatFormField, { optional: true });
   private readonly formats = inject(CimaInputFormats);
   private readonly adapter = inject<DateAdapter<Date>>(DateAdapter);
@@ -63,7 +64,7 @@ export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnI
 
   /** Supplies the locally provided adapter without capturing it in a root-level service. */
   private get formatOptions() {
-    return { adapter: this.adapter, hourCycle: this.picker.hourCycle, showSeconds: this.picker.showSeconds };
+    return { adapter: this.adapter, hourCycle: this.picker.hourCycle, showSeconds: this.picker.showSeconds && this.picker.precision !== 'hours', precision: this.picker.precision };
   }
 
   /** Returns a copy of the time-only model. */
@@ -77,6 +78,9 @@ export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnI
   /** Exposes parsing and constraint errors to value-only integrations and ARIA. */
   get errors() { return this.parseError ? { cimaTimePickerParse: { text: this.rawText } } : validateTime(this.time, this); }
 
+  /** Shares the popup precision with the common time validator. */
+  get precision() { return this.picker?.precision ?? 'full'; }
+
   /** Supplies a boolean accessible invalid state. */
   get hasErrors(): boolean { return !!this.errors; }
 
@@ -85,6 +89,12 @@ export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnI
 
   /** Registers the associated popup after directive inputs have been assigned. */
   ngOnInit(): void { this.picker.registerInput(this); this.refresh(); }
+
+  /** Opens readonly inputs from the whole Material field, including its empty padding. */
+  ngAfterViewInit(): void {
+    const origin = this.formField?.getConnectedOverlayOrigin().nativeElement;
+    if (origin) this.destroyRef.onDestroy(this.renderer.listen(origin, 'click', () => this.onClick()));
+  }
 
   /** Revalidates changed rules and prevents a stale popup draft from applying. */
   ngOnChanges(): void { this.picker?.close(); this.onValidatorChange(); this.refresh(); }
@@ -122,6 +132,7 @@ export class CimaTimePickerInput implements ControlValueAccessor, Validator, OnI
   /** Preserves unfinished text while refreshing formatted values and disabled state. */
   refresh(): void {
     this.element.nativeElement.value = this.rawText ?? (isValidTime(this.time) && this.picker ? this.formats.formatTime(this.time, this.formatOptions) : '');
+    this.onValidatorChange();
     this.element.nativeElement.disabled = this.isDisabled;
     if (this.isDisabled) this.picker?.close();
   }

@@ -48,10 +48,11 @@
     <span class="settings-label">Appearance</span>
     <mat-slide-toggle [checked]="darkMode()" (change)="darkMode.set($event.checked)">Dark theme</mat-slide-toggle>
     <mat-form-field subscriptSizing="dynamic">
-      <mat-label>Language</mat-label>
-      <mat-select [value]="language()" (selectionChange)="setLanguage($event.value)">
-        <mat-option value="it">Italian</mat-option>
-        <mat-option value="en">English</mat-option>
+      <mat-label>Localization</mat-label>
+      <mat-select [value]="localization()" (selectionChange)="setLocalization($event.value)">
+        @for (locale of locales; track locale.value) {
+          <mat-option [value]="locale.value">{{ locale.label }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <mat-form-field subscriptSizing="dynamic">
@@ -65,6 +66,8 @@
     <div class="settings-group">
     <span class="settings-label">Time & behavior</span>
     <mat-slide-toggle [checked]="allowViewSwitch()" (change)="allowViewSwitch.set($event.checked)">Allow view switching</mat-slide-toggle>
+    <mat-slide-toggle [checked]="readonlyInputs()" (change)="readonlyInputs.set($event.checked)">Readonly inputs</mat-slide-toggle>
+    <mat-slide-toggle [checked]="precision() === 'hours'" (change)="precision.set($event.checked ? 'hours' : 'full')">Hours only</mat-slide-toggle>
     <mat-slide-toggle [checked]="hourCycle() === '24'" (change)="hourCycle.set($event.checked ? '24' : '12')">24-hour format</mat-slide-toggle>
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>24-hour dial layout</mat-label>
@@ -73,7 +76,7 @@
         <mat-option value="dual-ring">Dual ring (Material)</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-slide-toggle [checked]="showSeconds()" (change)="showSeconds.set($event.checked)">Seconds</mat-slide-toggle>
+    <mat-slide-toggle [disabled]="precision() === 'hours'" [checked]="showSeconds()" (change)="showSeconds.set($event.checked)">Seconds</mat-slide-toggle>
     </div>
     <div class="settings-group">
     <span class="settings-label">Increments</span>
@@ -83,11 +86,11 @@
     </mat-form-field>
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Minute increment</mat-label>
-      <input matInput type="number" min="1" max="59" [ngModel]="minuteStep()" (ngModelChange)="minuteStep.set($event)">
+      <input matInput type="number" min="1" max="59" [disabled]="precision() === 'hours'" [ngModel]="minuteStep()" (ngModelChange)="minuteStep.set($event)">
     </mat-form-field>
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Second increment</mat-label>
-      <input matInput type="number" min="1" max="59" [ngModel]="secondStep()" (ngModelChange)="secondStep.set($event)">
+      <input matInput type="number" min="1" max="59" [disabled]="precision() === 'hours'" [ngModel]="secondStep()" (ngModelChange)="secondStep.set($event)">
     </mat-form-field>
     </div>
     <div class="settings-group">
@@ -120,18 +123,19 @@
       </div>
       <mat-form-field>
         <mat-label>Date and time</mat-label>
-        <input matInput [cimaDatetimePicker]="picker" [formControl]="appointment"
+        <input matInput [cimaDatetimePicker]="picker" [formControl]="appointment" [readonly]="readonlyInputs()"
           [min]="dateLimitsEnabled() ? minimumDate : null" [max]="dateLimitsEnabled() ? maximumDate : null"
           [cimaDatetimePickerFilter]="dateLimitsEnabled() ? availableDates : null"
           [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="activeTimeFilter()"
           [minDateTime]="datetimeLimitsEnabled() ? minimumDateTime : null"
           [maxDateTime]="datetimeLimitsEnabled() ? maximumDateTime : null">
-        <mat-hint>{{ language() === 'it' ? 'Example: 27/10/2026' : 'Example: 10/27/2026' }} {{ hourCycle() === '12' ? '02:30' : '14:30' }}{{ showSeconds() ? ':00' : '' }}{{ hourCycle() === '12' ? ' PM' : '' }}</mat-hint>
+        <mat-hint>Example: {{ datetimeExample }}</mat-hint>
+        @if (appointment.hasError('cimaDatetimePickerPrecision')) { <mat-error>Choose an exact hour with minutes and seconds set to zero</mat-error> }
         @if (appointment.hasError('cimaDatetimePickerParse')) { <mat-error>Enter a valid local date and complete time in the selected format</mat-error> }
         @if (appointment.hasError('invalidDatetimeConstraints')) { <mat-error>Invalid datetime constraints</mat-error> }
         <cima-datetime-picker-toggle matIconSuffix [for]="picker" />
         <cima-datetime-picker #picker [timeView]="datetimeView()"
-          [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()" [showSeconds]="showSeconds()"
+          [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()" [showSeconds]="showSeconds()" [precision]="precision()"
           [allowViewSwitch]="allowViewSwitch()" />
         @if (appointment.hasError('invalidDatetime')) { <mat-error>Invalid date and time</mat-error> }
         @if (appointment.hasError('cimaDatetimePickerMin')) { <mat-error>Date is before the minimum</mat-error> }
@@ -146,7 +150,7 @@
         }
       </mat-form-field>
       <div class="form-actions">
-        <button type="button" matButton (click)="setAppointmentExample()">Set date + 14:30:45</button>
+        <button type="button" matButton (click)="setAppointmentExample()">{{ precision() === 'hours' ? 'Set date + 14:00' : 'Set date + 14:30:45' }}</button>
         <button type="button" matButton (click)="appointment.reset()">Reset</button>
         <button type="button" matButton (click)="toggleAppointmentDisabled()">{{ appointment.disabled ? 'Enable' : 'Disable' }}</button>
       </div>
@@ -174,13 +178,14 @@
       </div>
       <mat-form-field>
         <mat-label>Time</mat-label>
-        <input matInput [cimaTimePicker]="timePopup" [formControl]="popupControl"
+        <input matInput [cimaTimePicker]="timePopup" [formControl]="popupControl" [readonly]="readonlyInputs()"
           [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="activeTimeFilter()">
         <cima-time-picker-toggle matIconSuffix [for]="timePopup" />
         <cima-time-picker-popup #timePopup [timeView]="popupTimeView()" [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()"
-          [showSeconds]="showSeconds()" [allowViewSwitch]="allowViewSwitch()" [showActions]="popupShowActions()" />
-        <mat-hint>Example: {{ hourCycle() === '12' ? '02:30' : '14:30' }}{{ showSeconds() ? ':00' : '' }}{{ hourCycle() === '12' ? ' PM' : '' }}</mat-hint>
+          [showSeconds]="showSeconds()" [precision]="precision()" [allowViewSwitch]="allowViewSwitch()" [showActions]="popupShowActions()" />
+        <mat-hint>Example: {{ formatTime({ hours: 14, minutes: precision() === 'hours' ? 0 : 30, seconds: 0 }) }}</mat-hint>
         @if (popupControl.hasError('cimaTimePickerParse')) { <mat-error>Enter a complete time in the selected 12/24-hour format</mat-error> }
+        @if (popupControl.hasError('timePrecision')) { <mat-error>Choose an exact hour with minutes and seconds set to zero</mat-error> }
         @if (popupControl.hasError('invalidTime')) { <mat-error>Invalid time value</mat-error> }
         @if (popupControl.hasError('invalidTimeConstraints')) { <mat-error>Invalid time constraints</mat-error> }
         @if (popupControl.hasError('timeMin') || popupControl.hasError('timeMax') || popupControl.hasError('timeRange') || popupControl.hasError('timeFilter')) {
@@ -200,14 +205,40 @@
       </details>
     </section>
     <section class="example">
+      <h2>Date and time range</h2>
+      <p class="description">Choose start and end dates and times, then confirm the whole interval.</p>
+      <div class="example-options">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Range layout</mat-label>
+        <mat-select [value]="rangeLayout()" (selectionChange)="rangeLayout.set($event.value)">
+          <mat-option value="auto">Automatic</mat-option>
+          <mat-option value="horizontal">Horizontal</mat-option>
+          <mat-option value="vertical">Vertical</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-slide-toggle [checked]="rangeTimeView() === 'clock'"
+        (change)="rangeTimeView.set($event.checked ? 'clock' : 'input')">Show clock dials</mat-slide-toggle>
+      </div>
+      <cima-datetime-range-picker #rangePicker [formControl]="range" [layout]="rangeLayout()"
+        [hourCycle]="hourCycle()" [hourDial]="hourDial()" [timeView]="rangeTimeView()"
+        [showSeconds]="showSeconds()" [precision]="precision()" [allowViewSwitch]="allowViewSwitch()" />
+      <p class="result">{{ rangePicker.formatPreview(range.value?.start) }} – {{ rangePicker.formatPreview(range.value?.end) }}</p>
+      <div class="form-actions">
+        <button type="button" matButton (click)="range.reset()">Reset</button>
+        <button type="button" matButton (click)="range.disabled ? range.enable() : range.disable()">{{ range.disabled ? 'Enable' : 'Disable' }}</button>
+      </div>
+      <a class="guide-link" routerLink="/docs/datetime-range">Range guide →</a>
+      <pre><code>{{ rangeCode() }}</code></pre>
+    </section>
+    <section class="example">
       <h2>Time only · ngModel</h2>
       <p class="description">Embed the picker directly and bind its value with ngModel.</p>
       <div class="time-card">
-        <cima-time-picker [(ngModel)]="standaloneTime" [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()" [showSeconds]="showSeconds()"
+        <cima-time-picker [(ngModel)]="standaloneTime" [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()" [showSeconds]="showSeconds()" [precision]="precision()"
           [allowViewSwitch]="allowViewSwitch()" [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="activeTimeFilter()" />
       </div>
       <p class="result">{{ standaloneTime()?.hours }}:{{ standaloneTime()?.minutes?.toString()?.padStart(2, '0') }}:{{ standaloneTime()?.seconds?.toString()?.padStart(2, '0') }}</p>
-      <pre><code>&lt;cima-time-picker [(ngModel)]="time" /&gt;</code></pre>
+      <pre><code>&lt;cima-time-picker [(ngModel)]="time" precision="{{ precision() }}" /&gt;</code></pre>
     </section>
     <section class="example">
       <h2>Reactive Forms</h2>
@@ -215,24 +246,24 @@
       <p class="description">Explore validation, programmatic values, and disabled states.</p>
       <div class="time-card">
         <cima-time-picker [formControl]="timeControl" timeView="input" [hourCycle]="hourCycle()" [hourDial]="hourDial()" [hourStep]="hourStep()" [minuteStep]="minuteStep()" [secondStep]="secondStep()"
-          [showSeconds]="showSeconds()" [allowViewSwitch]="allowViewSwitch()" [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="activeTimeFilter()" />
+          [showSeconds]="showSeconds()" [precision]="precision()" [allowViewSwitch]="allowViewSwitch()" [minTime]="minimumTime()" [maxTime]="maximumTime()" [timeFilter]="activeTimeFilter()" />
       </div>
       <div class="form-actions">
         <button type="button" matButton (click)="timeControl.reset()">Reset</button>
-        <button type="button" matButton (click)="timeControl.setValue({ hours: 14, minutes: 30, seconds: 0 })">14:30</button>
+        <button type="button" matButton (click)="timeControl.setValue({ hours: 14, minutes: precision() === 'hours' ? 0 : 30, seconds: 0 })">{{ precision() === 'hours' ? '14:00' : '14:30' }}</button>
         <button type="button" matButton (click)="toggleFormDisabled()">{{ timeControl.disabled ? 'Enable' : 'Disable' }}</button>
       </div>
       <p>required: {{ timeControl.hasError('required') }} · touched: {{ timeControl.touched }}</p>
       <pre>{{ timeControl.value | json }}</pre>
-      <pre><code>&lt;cima-time-picker [formControl]="timeControl" /&gt;</code></pre>
+      <pre><code>&lt;cima-time-picker [formControl]="timeControl" precision="{{ precision() }}" /&gt;</code></pre>
     </section>
     <section class="example">
       <h2>Local label override</h2>
       <a class="guide-link" routerLink="/docs/internationalization">Translation guide →</a>
       <p class="description">Fine-tune individual labels for your application.</p>
-      <p class="note">This custom label stays the same when switching languages; the other labels follow the global service.</p>
+      <p class="note">This custom label stays the same when changing localization; the other labels follow the global service.</p>
       <div class="time-card">
-        <cima-time-picker timeView="input" [allowViewSwitch]="false"
+        <cima-time-picker [precision]="precision()" timeView="input" [allowViewSwitch]="false"
           [labels]="{ enterTime: 'Appointment time' }" />
       </div>
     </section>

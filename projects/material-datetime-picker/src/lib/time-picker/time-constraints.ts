@@ -1,7 +1,8 @@
 import { ValidationErrors } from '@angular/forms';
-import { CimaTime, CimaTimeFilter, isValidTime } from './time-value';
+import { CimaTime, CimaTimeFilter, CimaTimePrecision, isValidTime } from './time-value';
 
 export interface CimaTimeConstraints {
+  precision?: CimaTimePrecision;
   minTime?: CimaTime | null;
   maxTime?: CimaTime | null;
   timeFilter?: CimaTimeFilter | null;
@@ -21,6 +22,7 @@ export function validateTime(value: unknown, limits: CimaTimeConstraints): Valid
   }
   if (value == null) return null;
   if (!isValidTime(value)) return { invalidTime: true };
+  if (limits.precision === 'hours' && (value.minutes !== 0 || value.seconds !== 0)) return { timePrecision: true };
   const actual = seconds(value);
   const min = minTime ? seconds(minTime) : null;
   const max = maxTime ? seconds(maxTime) : null;

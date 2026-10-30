@@ -8,3 +8,5 @@ export * from './lib/input/input-formats';
 export * from './lib/time-picker-popup/time-picker-popup';
 export * from './lib/time-picker-popup/time-picker-input';
 export * from './lib/time-picker-popup/time-picker-toggle';
+export * from './lib/datetime-range-picker/datetime-range-picker';
+export * from './lib/time-picker/picker-locales';

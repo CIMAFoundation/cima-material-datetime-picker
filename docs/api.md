@@ -4,6 +4,8 @@
 
 | Export | Purpose |
 | --- | --- |
+| `CimaDatetimeRangePicker` | Standalone datetime range control with integrated trigger, responsive popup, and Angular Forms support |
+| `CimaDatetimeRange`, `CimaDatetimeRangeLayout` | Native Date endpoints and auto/horizontal/vertical layouts; see [Datetime range](datetime-range.md) |
 | `CimaDatetimePicker` | Public datetime picker using the original Material panel |
 | `CimaDatetimePickerInput` | Editable Date input, CVA, parsing and constraint validation |
 | `CimaDatetimePickerToggle` | Native Material toggle wrapper |
@@ -13,13 +15,17 @@
 | `CimaInputFormats`, `CimaInputFormatOptions` | Replaceable strict locale parsing and formatting service/context |
 | `CimaTimePicker` | Standalone component; selector `cima-time-picker` |
 | `CimaTime` | Time-only value interface |
+| `CimaTimePrecision` | `'full'` (existing behavior) or `'hours'` (exact hours only) |
+| `withTimePrecision(time, precision)` | Returns a copied time, zeroing minutes/seconds in hours precision |
 | `CimaTimeView` | `'input'` or `'clock'` |
 | `CimaHourDial` | `'single-ring'` or `'dual-ring'` |
 | `CimaTimeFilter` | `(time: CimaTime) => boolean`, recurring daily predicate |
 | `CimaTimeUnit` | `'hours'`, `'minutes'`, or `'seconds'` |
 | `CimaTimeLabels` | Complete set of time-selection labels |
 | `CIMA_TIME_LABELS` | Default English time-selection labels |
-| `CimaTimepickerIntl` | Injectable global labels and runtime change notifications |
+| `CimaTimepickerIntl` | Global time/action/range labels; `setLocale(locale, overrides?)` applies included translations and notifies open controls |
+| `CimaPickerLabels`, `CimaCalendarLabels`, `CimaPickerTranslation` | Types for included picker and Material calendar translations |
+| `CIMA_PICKER_TRANSLATIONS`, `getCimaPickerTranslation(locale)` | Included en/it/fr/de/es catalogs, locale → language → English fallback, and independent dictionary copies |
 | `isValidTime(value)` | Runtime guard for a complete, valid `CimaTime` |
 
 ## Value contract
@@ -59,7 +65,8 @@ The value is `CimaTime | null`: `{ hours, minutes, seconds }`, always using 24-h
 | `allowViewSwitch` | `boolean` | `true` | Shows the keyboard/clock switch button |
 | `hourCycle` | `'12' \| '24'` | `'24'` | `'12'` or `'24'`; does not change the value format |
 | `hourDial` | `CimaHourDial` | `'dual-ring'` | 24-hour layout: `'single-ring'` or `'dual-ring'`; ignored in 12-hour mode |
-| `showSeconds` | `boolean` | `false` | Shows seconds; hidden seconds are preserved |
+| `precision` | `CimaTimePrecision` | `'full'` | Set `'hours'` for editable hours with visible disabled minutes fixed at 00 and hidden seconds |
+| `showSeconds` | `boolean` | `false` | Shows seconds in full precision; hours precision always hides and zeros them |
 | `hourStep`, `minuteStep`, `secondStep` | `number` | `1` | Control increments; these are not validation constraints |
 | `minTime`, `maxTime` | `CimaTime \| null` | `null` | Inclusive recurring time limits, supporting overnight windows |
 | `timeFilter` | `CimaTimeFilter \| null` | `null` | Additional recurring time predicate |
@@ -122,3 +129,28 @@ The inline time-only content does not expose popup methods. `CimaTimePickerPopup
 ---
 
 [Documentation index](README.md) · [API reference](api.md) · [Project status](status.md)
+
+## Datetime range control
+
+`CimaDatetimeRangePicker` (`cima-datetime-range-picker`) uses `CimaDatetimeRange | null`: `{ start: Date | null, end: Date | null }`. It supports Reactive Forms, ngModel, and `[(value)]`. The popup combines a Material range calendar and two time controls, with explicit OK/Cancel and `layout="auto"` by default. See [Datetime range](datetime-range.md) for the full input/output API, responsive breakpoints, native-date constraints, validation errors, and selection behavior.
+
+## Localization
+
+Coordinate `DateAdapter.setLocale(locale)` for formats, `CimaTimepickerIntl.setLocale(locale, overrides?)` for picker labels, and `MatDatepickerIntl` with `getCimaPickerTranslation(locale).calendar` for calendar labels. The English defaults remain until explicitly configured. Unsupported text languages fall back to English while formats retain the chosen locale. Service overrides registered through `setLocale` persist across later locale changes; component inputs take precedence. See [Localization and translations](internationalization.md) for startup/runtime setup, calendar overrides, all included locales, and the English-only playground policy.
+
+## Hour-only precision
+
+All four public containers (`CimaTimePicker`, `CimaTimePickerPopup`, `CimaDatetimePicker`, and `CimaDatetimeRangePicker`) support `precision="hours"`. The default `precision="full"` preserves existing minute/optional-second behavior.
+
+```html
+<cima-time-picker precision="hours" />
+<cima-time-picker-popup #timePopup precision="hours" />
+<cima-datetime-picker #datetimePicker precision="hours" />
+<cima-datetime-range-picker [formControl]="range" precision="hours" />
+```
+
+Minutes remain visible as `00` but disabled in both numeric and clock views. Seconds are hidden even if `showSeconds` is true. The dial only selects hours and never advances to minutes. Clicking/releasing an hour or pressing Enter in the hour field completes selection; a time popup without actions closes at that point. Typing updates the exact-hour value without auto-closing; press Enter to finish. With confirmation actions, OK remains the application boundary. AM/PM remains selectable in 12-hour mode.
+
+User selections produce zero minutes/seconds (and zero milliseconds for Date endpoints). Programmatic form writes are never silently rounded: non-hour-aligned external values remain in the form and receive `timePrecision`, `cimaDatetimePickerPrecision`, or `cimaDatetimeRangePrecision`. Opening a popup prepares an exact-hour draft; only an edit or confirmation applies it. Disabled minute controls cannot edit or activate the minute dial, and minute/second increments have no effect in this mode. Daily/full datetime limits remain exact and are not rounded; for example a 09:30 minimum means the first selectable hour is 10:00.
+
+External editable inputs keep their usual localized syntax, with zero minutes and no seconds: `14:00` or `02:00 PM`, plus the date for datetime fields. Off-hour text is a parse error; plain `14` is not a new supported syntax. Hidden seconds from a prior value are cleared on hour-only user edits instead of preserved. The datetime range input remains read-only. See [Manual input](parsing.md).

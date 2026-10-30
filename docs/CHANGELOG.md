@@ -2,11 +2,20 @@
 
 ## Unreleased
 
-- Show all hour labels from 00 to 23 in the single-ring layout.
+### Added
+- Datetime range picker with a readonly Material input, range calendar, start/end times, responsive layouts, Angular Forms, and inclusive datetime bounds.
+- Hour-only precision across time, datetime, and range pickers: minutes remain visible and disabled at 00, seconds are hidden, and dial selection completes after hours.
+- Included English, Italian, French, German, and Spanish picker/calendar translations, with locale/language fallback and application overrides.
 
-- Use the Material dual-ring layout by default for 24-hour dials in the library and demo; the single-ring layout remains available through `hourDial`.
+### Changed
+- Use the Material dual-ring layout by default; the optional single ring now displays all 24 hour labels.
+- Apply valid time popup edits immediately when confirmation buttons are hidden. With buttons, edits remain provisional until OK.
+- Keep the playground interface in English, with six Localization options, new examples, and updated guides.
 
-- Update the time input and form immediately on valid popup edits when confirmation buttons are hidden; keep explicit confirmation when buttons are shown.
+### Fixed
+- Open readonly time, datetime, and range pickers from the entire Material field.
+- Keep range previews and summaries synchronized with the calendar locale and selected time precision.
+- Reject nonexistent DST times, malformed ranges, and invalid bounds; preserve unchanged repeated-time instants and match keyboard order to the responsive layout.
 
 ## 22.0.4 - 2026-10-30
 

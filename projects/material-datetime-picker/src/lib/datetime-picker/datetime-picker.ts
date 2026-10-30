@@ -11,7 +11,7 @@ import { ComponentType } from '@angular/cdk/portal';
 import { Subject, Subscription } from 'rxjs';
 import { DATETIME_CALENDAR_CONTEXT, DatetimeCalendarContext, DatetimeCalendarHeader } from './datetime-calendar-header';
 import { CimaTimePicker } from '../time-picker/time-picker';
-import { CimaHourDial, CimaTime, CimaTimeView, CimaTimeLabels, isValidTime } from '../time-picker/time-value';
+import { CimaHourDial, CimaTimePrecision, withTimePrecision, CimaTime, CimaTimeView, CimaTimeLabels, isValidTime } from '../time-picker/time-value';
 import { validateTime } from '../time-picker/time-constraints';
 import { CimaTimepickerIntl } from '../time-picker/timepicker-intl';
 import type { CimaDatetimePickerInput } from './datetime-picker-input';
@@ -32,6 +32,7 @@ export class CimaDatetimePicker implements AfterViewInit, OnChanges, OnDestroy, 
   @Input() secondStep = 1;
   @Input() labels: Partial<CimaTimeLabels> = {};
   @Input({ transform: booleanAttribute }) opened = false;
+  @Input() precision: CimaTimePrecision = 'full';
   @Input() hourCycle: '12' | '24' = '24';
   @Input() hourDial: CimaHourDial = 'dual-ring';
   @Input() timeView: CimaTimeView = 'input';
@@ -130,7 +131,8 @@ export class CimaDatetimePicker implements AfterViewInit, OnChanges, OnDestroy, 
   get draftValue(): Date | null {
     const date = this.draftDate();
     const time = this.draftTime();
-    return date && isValidTime(time) ? this.adapter.setTime(date, time.hours, time.minutes, time.seconds) : null;
+    const selected = time && withTimePrecision(time, this.precision);
+    return date && isValidTime(selected) ? this.adapter.setTime(date, selected.hours, selected.minutes, selected.seconds) : null;
   }
 
   /** Keeps all day, daily-time and instant rules in a single validation path. */
@@ -170,9 +172,9 @@ export class CimaDatetimePicker implements AfterViewInit, OnChanges, OnDestroy, 
     const date = this.control?.value;
     this.applied = false;
     this.draftDate.set(date ? this.adapter.clone(date) : null);
-    this.draftTime.set(date ? {
+    this.draftTime.set(withTimePrecision(date ? {
       hours: this.adapter.getHours(date), minutes: this.adapter.getMinutes(date), seconds: this.adapter.getSeconds(date),
-    } : { hours: 0, minutes: 0, seconds: 0 });
+    } : { hours: 0, minutes: 0, seconds: 0 }, this.precision));
     this.isOpen.set(true);
     this.opened = true;
     this.openedChange.emit(true);
@@ -199,7 +201,8 @@ export class CimaDatetimePicker implements AfterViewInit, OnChanges, OnDestroy, 
     this.model.updateSelection(control.value, control);
     this.selectionSubscription = this.model.selectionChanged.subscribe(change => {
       if (change.source === control || !this.isOpen() || this.disabled || control.disabled) return;
-      const time = this.draftTime();
+      const draft = this.draftTime();
+      const time = draft && withTimePrecision(draft, this.precision);
       if (!isValidTime(time)) return;
       const date = this.draftDate();
       const value = date ? this.adapter.setTime(date, time.hours, time.minutes, time.seconds) : null;

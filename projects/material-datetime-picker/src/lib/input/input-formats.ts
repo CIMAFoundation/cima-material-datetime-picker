@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
-import { CimaTime, isValidTime } from '../time-picker/time-value';
+import { CimaTime, CimaTimePrecision, isValidTime } from '../time-picker/time-value';
 
 export interface CimaInputFormatOptions {
   adapter: DateAdapter<Date>;
   hourCycle: '12' | '24';
   showSeconds: boolean;
+  precision?: CimaTimePrecision;
 }
 
 /** Replace this service to customize parsing and display without replacing the app's date adapter. */
@@ -28,7 +29,7 @@ export class CimaInputFormats {
   formatTime(value: CimaTime, options: CimaInputFormatOptions): string {
     const hour = options.hourCycle === '12' ? value.hours % 12 || 12 : value.hours;
     const parts = [hour, value.minutes];
-    if (options.showSeconds) parts.push(value.seconds);
+    if (options.showSeconds && options.precision !== 'hours') parts.push(value.seconds);
     return parts.map(part => String(part).padStart(2, '0')).join(':')
       + (options.hourCycle === '12' ? ` ${this.period(value.hours >= 12, options)}` : '');
   }
@@ -41,7 +42,7 @@ export class CimaInputFormats {
   /** Parses complete times strictly; hidden seconds survive edits of an existing value. */
   parseTime(text: string, options: CimaInputFormatOptions, previous: CimaTime | null = null): CimaTime | null {
     const match = /^(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?(?:\s+(.+))?$/.exec(text.trim());
-    if (!match || (options.showSeconds ? match[3] == null : match[3] != null)) return null;
+    if (!match || (options.showSeconds && options.precision !== 'hours' ? match[3] == null : match[3] != null)) return null;
     let hours = Number(match[1]);
     if (options.hourCycle === '12') {
       const period = match[4]?.toLocaleLowerCase();
@@ -50,8 +51,8 @@ export class CimaInputFormats {
       if (hours < 1 || hours > 12 || (period !== am && period !== pm)) return null;
       hours = hours % 12 + (period === pm ? 12 : 0);
     } else if (match[4]) return null;
-    const value = { hours, minutes: Number(match[2]), seconds: options.showSeconds ? Number(match[3]) : previous?.seconds ?? 0 };
-    return isValidTime(value) ? value : null;
+    const value = { hours, minutes: Number(match[2]), seconds: options.precision === 'hours' ? 0 : options.showSeconds ? Number(match[3]) : previous?.seconds ?? 0 };
+    return isValidTime(value) && (options.precision !== 'hours' || value.minutes === 0) ? value : null;
   }
 
   /** Parses the locale's numeric date order and rejects overflow and nonexistent local times. */

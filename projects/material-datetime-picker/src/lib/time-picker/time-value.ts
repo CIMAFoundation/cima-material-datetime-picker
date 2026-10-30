@@ -6,6 +6,7 @@ export interface CimaTime {
 }
 
 export type CimaHourDial = 'single-ring' | 'dual-ring';
+export type CimaTimePrecision = 'full' | 'hours';
 export type CimaTimeView = 'input' | 'clock';
 export type CimaTimeUnit = keyof CimaTime;
 export type CimaTimeFilter = (time: CimaTime) => boolean;
@@ -39,4 +40,9 @@ export function isValidTime(value: unknown): value is CimaTime {
   return Number.isInteger(time.hours) && time.hours >= 0 && time.hours <= 23
     && Number.isInteger(time.minutes) && time.minutes >= 0 && time.minutes <= 59
     && Number.isInteger(time.seconds) && time.seconds >= 0 && time.seconds <= 59;
+}
+
+/** Keeps full precision unchanged, or creates an exact-hour value for hour-only user selections. */
+export function withTimePrecision(time: CimaTime, precision: CimaTimePrecision): CimaTime {
+  return { ...time, ...(precision === 'hours' ? { minutes: 0, seconds: 0 } : {}) };
 }

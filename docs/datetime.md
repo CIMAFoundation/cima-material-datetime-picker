@@ -2,7 +2,7 @@
 
 The library now provides a datetime input directive, picker, and toggle. They share a complete native `Date | null` value with Angular Forms and retain the original Material datepicker panel, calendar, action portal, focus handling, and popup positioning.
 
-The input supports strict localized manual entry as well as popup selection. Date-only, recurring-time, and complete-datetime constraints are implemented. Ranges remain outside the current scope. See [Manual input](parsing.md) for formats and parsing errors.
+The input supports strict localized manual entry as well as popup selection. Date-only, recurring-time, and complete-datetime constraints are implemented. For intervals, use the separate [datetime range picker](datetime-range.md). See [Manual input](parsing.md) for formats and parsing errors.
 
 ## Reactive Forms example
 
@@ -59,7 +59,7 @@ Selector: `input[cimaDatetimePicker]`. Export: `cimaDatetimePickerInput`.
 | `cimaDatetimePicker` | `CimaDatetimePicker` | Required associated picker |
 | `value` | `Date \| null` | Programmatic value when not using Forms |
 | `disabled` | `boolean` | Explicit disabled state, combined with the form's state |
-| `readonly` | `boolean` | Defaults to false; disables manual entry while keeping popup selection available |
+| `readonly` | `boolean` | Defaults to false; disables manual entry and opens the popup on click, Enter, or ArrowDown |
 | `min`, `max` | `Date \| null` | Inclusive lower/upper calendar-date bounds; time portions are ignored |
 | `minTime`, `maxTime` | `CimaTime \| null` | Inclusive recurring daily limits; min > max permits an overnight window |
 | `timeFilter` | `CimaTimeFilter \| null` | Recurring time predicate |
@@ -160,6 +160,7 @@ Selector: `cima-datetime-picker`. Export: `cimaDatetimePicker`.
 | `hourDial` | `'dual-ring'` | 24-hour single/dual ring |
 | `timeView` | `'input'` | Initial numeric or clock view |
 | `allowViewSwitch` | `true` | Allows switching numeric/clock views |
+| `precision` | `'full'` | `'hours'` keeps minutes visible and disabled at 00, hides seconds, and limits selection to exact hours |
 | `showSeconds` | `false` | Displays seconds while preserving hidden seconds |
 | `hourStep`, `minuteStep`, `secondStep` | `1` | Time interaction increments, with the inline picker's fallback/range semantics; not validation constraints |
 | `labels` | `{}` | Partial local time-content labels |
@@ -197,11 +198,11 @@ Selector: `cima-datetime-picker-toggle`. Required input: `[for]="picker"`. Optio
 
 Import `FormsModule` and use `[(ngModel)]="appointment"` instead of `[formControl]`, with a `Date | null` property. Inside a form, also supply `name` or make ngModel standalone.
 
-The formatted input follows `DateAdapter` locale changes. Native calendar labels use `MatDatepickerIntl`; the time content and action labels use `CimaTimepickerIntl`. See [Internationalization](internationalization.md). Theme classes must also be available on the overlay container.
+The formatted input follows `DateAdapter` locale changes. Native calendar labels use `MatDatepickerIntl`; the time content and action labels use `CimaTimepickerIntl`. Included English, Italian, French, German, and Spanish dictionaries can be selected with `setLocale()`, with base-language resolution and English fallback; local label inputs take precedence. See [Internationalization](internationalization.md). Theme classes must also be available on the overlay container.
 
 ## Verification and remaining work
 
-Tests cover initial values, preserved hidden seconds, date-only and time-only confirmations, cancellation/reopening, programmatic replacement, reset, disabled behavior, invalid Dates, and ngModel updates. Date constraints also have tests for inclusive boundaries, ignored time portions, filters, dynamic rule changes, invalid configuration, and rejected confirmation. Recurring bounds, overnight windows, instant boundaries, pending-day validation, and custom-header forwarding are tested. Manual parsing, writable opened state, pending select(), increments, and option forwarding have additional tests. Ranges, alternate adapters, a configurable timezone/DST policy, full accessibility, and mobile verification remain open.
+Tests cover initial values, preserved hidden seconds, date-only and time-only confirmations, cancellation/reopening, programmatic replacement, reset, disabled behavior, invalid Dates, and ngModel updates. Date constraints also have tests for inclusive boundaries, ignored time portions, filters, dynamic rule changes, invalid configuration, and rejected confirmation. Recurring bounds, overnight windows, instant boundaries, pending-day validation, and custom-header forwarding are tested. Manual parsing, writable opened state, pending select(), increments, and option forwarding have additional tests. Alternate adapters, a configurable timezone/DST policy, full accessibility, and mobile verification remain open.
 
 ## Controlled opening and increments
 
@@ -216,3 +217,7 @@ Tests cover initial values, preserved hidden seconds, date-only and time-only co
 Use a boolean property or signal for `pickerOpen` and a native Date for `nextDay`. A valid manually entered minute such as 17 is accepted even with `minuteStep=15`. Changing a step does not rewrite the selected value.
 
 [Documentation index](README.md) · [API reference](api.md) · [Project status](status.md)
+
+## Exact-hour selection
+
+Set `precision="hours"` to edit/select hours only, with visible disabled minutes at 00 and hidden seconds. It overrides `showSeconds`. `precision="full"` is the default. AM/PM stays available. Form values supplied by the application are preserved and validated if not aligned to an exact hour; user edits/confirmation zero minutes and seconds. See [Hour-only precision](api.md#hour-only-precision) for completion behavior, validation, and examples.

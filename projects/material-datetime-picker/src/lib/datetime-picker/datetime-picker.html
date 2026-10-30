@@ -10,7 +10,7 @@
         <cima-time-picker [(value)]="draftTime" [hourCycle]="hourCycle" [hourDial]="hourDial"
           [minTime]="timeConstraints.minTime" [maxTime]="timeConstraints.maxTime" [timeFilter]="timeConstraints.timeFilter"
           [hourStep]="hourStep" [minuteStep]="minuteStep" [secondStep]="secondStep" [labels]="labels"
-          [timeView]="timeView" [allowViewSwitch]="allowViewSwitch" [showSeconds]="showSeconds" />
+          [timeView]="timeView" [allowViewSwitch]="allowViewSwitch" [showSeconds]="showSeconds" [precision]="precision" />
         @if (showDraftError) {
           <p class="error" role="alert">{{ intl.unavailableTime }}</p>
         }

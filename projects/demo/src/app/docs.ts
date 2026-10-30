@@ -9,6 +9,7 @@ export const DOC_PAGES = [
   { slug: 'README', title: 'Overview' },
   { slug: 'getting-started', title: 'Getting started' },
   { slug: 'datetime', title: 'Date and time' },
+  { slug: 'datetime-range', title: 'Datetime range' },
   { slug: 'forms', title: 'Forms and values' },
   { slug: 'popups', title: 'Time input and popup' },
   { slug: 'parsing', title: 'Manual input and formats' },

@@ -17,7 +17,7 @@
     "tslib": "^2.8.1"
   },
   "sideEffects": false,
-  "description": "Angular Material 3 date and time picker with light/dark themes, clock and numeric views, Angular Forms integration, and Material 2 support.",
+  "description": "Angular Material date, time and datetime range pickers with M2/M3 themes, responsive layouts, clock and numeric views, Angular Forms, and localization.",
   "author": "CIMA Foundation",
   "homepage": "https://cimafoundation.github.io/cima-material-datetime-picker/",
   "repository": {
@@ -40,7 +40,13 @@
     "timepicker",
     "time-picker",
     "datetimepicker",
-    "datetime-picker"
+    "datetime-picker",
+    "datetime-range-picker",
+    "date-time-range-picker",
+    "date-range-picker",
+    "daterangepicker",
+    "datetime-range",
+    "date-range"
   ],
   "publishConfig": {
     "access": "public",

@@ -4,7 +4,7 @@ import { booleanAttribute, ChangeDetectorRef, Component, ElementRef, inject, Inp
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { CimaTimePicker } from '../time-picker/time-picker';
-import { CimaHourDial, CimaTime, CimaTimeLabels, CimaTimeView, isValidTime } from '../time-picker/time-value';
+import { CimaHourDial, CimaTimePrecision, withTimePrecision, CimaTime, CimaTimeLabels, CimaTimeView, isValidTime } from '../time-picker/time-value';
 import { validateTime } from '../time-picker/time-constraints';
 import { CimaTimepickerIntl } from '../time-picker/timepicker-intl';
 import type { CimaTimePickerInput } from './time-picker-input';
@@ -25,7 +25,7 @@ let nextId = 0;
       <div class="panel" [class]="panelClass" [id]="id" role="dialog" aria-modal="true"
         [attr.aria-label]="labels.selectTime || intl.selectTime" cdkTrapFocus>
         <cima-time-picker [(value)]="draftTime" [timeView]="timeView" [hourCycle]="hourCycle"
-          [hourDial]="hourDial" [showSeconds]="showSeconds" [allowViewSwitch]="allowViewSwitch" [labels]="labels"
+          [hourDial]="hourDial" [showSeconds]="showSeconds" [precision]="precision" [allowViewSwitch]="allowViewSwitch" [labels]="labels"
           [hourStep]="hourStep" [minuteStep]="minuteStep" [secondStep]="secondStep"
           [minTime]="control?.minTime ?? null" [maxTime]="control?.maxTime ?? null" [timeFilter]="control?.timeFilter ?? null"
           (timeChange)="applyImmediate($event)" (selectionComplete)="complete($event)" />
@@ -48,6 +48,7 @@ let nextId = 0;
 })
 export class CimaTimePickerPopup implements OnChanges, OnDestroy {
   @Input() timeView: CimaTimeView = 'clock';
+  @Input() precision: CimaTimePrecision = 'full';
   @Input() hourCycle: '12' | '24' = '24';
   @Input() hourDial: CimaHourDial = 'dual-ring';
   @Input() hourStep = 1;
@@ -127,7 +128,7 @@ export class CimaTimePickerPopup implements OnChanges, OnDestroy {
     // Focusing an editable trigger here opens the mobile keyboard before the dial.
     if (this.trigger !== this.control.element.nativeElement) this.trigger.focus();
     const value = this.control.value;
-    this.draftTime.set(isValidTime(value) ? { ...value } : { hours: 0, minutes: 0, seconds: 0 });
+    this.draftTime.set(isValidTime(value) ? withTimePrecision(value, this.precision) : { hours: 0, minutes: 0, seconds: 0 });
     this.isOpen.set(true);
     this.opened.emit();
   }

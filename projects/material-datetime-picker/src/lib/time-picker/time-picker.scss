@@ -69,3 +69,6 @@ button:focus-visible, .clock:focus-visible { outline: 2px solid var(--mat-sys-pr
 .clock.single-ring .hand-end { width: 32px; height: 32px; }
 
 .error { color: var(--mat-sys-error, #b3261e); font: var(--mat-sys-body-small, 400 12px/16px Roboto, sans-serif); margin: 0 0 12px; }
+
+// Keep the fixed minute field visibly disabled without dimming the active hour field.
+:host:not(.cima-time-disabled) .field :disabled { opacity: 0.45; cursor: default; }

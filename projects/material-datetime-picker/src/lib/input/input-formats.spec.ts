@@ -11,6 +11,19 @@ describe('Localized input formats', () => {
     options = { adapter: TestBed.inject(DateAdapter<Date>), hourCycle: '24', showSeconds: false };
   });
 
+  it('accepts only exact-hour manual input and ignores showSeconds and preserved seconds in hour-only mode', () => {
+    options.precision = 'hours'; options.showSeconds = true;
+    options.adapter.setLocale('en-US');
+    const previous = { hours: 7, minutes: 15, seconds: 45 };
+    expect(formats.parseTime('14:00', options, previous)).toEqual({ hours: 14, minutes: 0, seconds: 0 });
+    expect(formats.parseTime('14:30', options, previous)).toBeNull();
+    expect(formats.parseTime('14:00:00', options, previous)).toBeNull();
+    options.hourCycle = '12';
+    expect(formats.parseTime('02:00 PM', options, previous)).toEqual({ hours: 14, minutes: 0, seconds: 0 });
+    expect(formats.formatTime({ hours: 14, minutes: 0, seconds: 0 }, options)).toBe('02:00 PM');
+    expect(formats.parseDatetime('10/27/2026 02:00 PM', options)?.getMinutes()).toBe(0);
+  });
+
   it.each([
     ['en-US', '10/27/2026 14:30'], ['it-IT', '27/10/2026 14:30'],
     ['en-GB', '27/10/2026 14:30'], ['de-DE', '27.10.2026 14:30'],

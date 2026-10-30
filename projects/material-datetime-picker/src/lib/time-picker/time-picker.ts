@@ -8,7 +8,7 @@ import { CimaTimepickerIntl } from './timepicker-intl';
 import { AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
-  CimaHourDial, CimaTime, CimaTimeFilter, CimaTimeLabels, CimaTimeUnit, CimaTimeView, isValidTime,
+  CimaHourDial, CimaTimePrecision, withTimePrecision, CimaTime, CimaTimeFilter, CimaTimeLabels, CimaTimeUnit, CimaTimeView, isValidTime,
 } from './time-value';
 
 /** Reusable time selection content; the host owns the popup and confirmation buttons. */
@@ -31,7 +31,9 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
   readonly hourCycle = input<'12' | '24'>('24');
   readonly hourDial = input<CimaHourDial>('dual-ring');
   readonly singleRing24 = computed(() => this.hourCycle() === '24' && this.hourDial() === 'single-ring');
+  readonly precision = input<CimaTimePrecision>('full');
   readonly showSeconds = input(false);
+  readonly secondsVisible = computed(() => this.precision() !== 'hours' && this.showSeconds());
   readonly hourStep = input(1);
   readonly minuteStep = input(1);
   readonly secondStep = input(1);
@@ -63,11 +65,11 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
   readonly invalidTime = computed(() => this.value() != null && !isValidTime(this.value()));
   readonly time = computed(() => {
     const value = this.value();
-    return isValidTime(value) ? value : { hours: 0, minutes: 0, seconds: 0 };
+    return isValidTime(value) ? withTimePrecision(value, this.precision()) : { hours: 0, minutes: 0, seconds: 0 };
   });
   readonly units = computed<CimaTimeUnit[]>(() =>
-    this.showSeconds() ? ['hours', 'minutes', 'seconds'] : ['hours', 'minutes']);
-  readonly clockUnit = computed(() => this.activeUnit() === 'seconds' && !this.showSeconds()
+    this.secondsVisible() ? ['hours', 'minutes', 'seconds'] : ['hours', 'minutes']);
+  readonly clockUnit = computed(() => this.precision() === 'hours' ? 'hours' : this.activeUnit() === 'seconds' && !this.secondsVisible()
     ? 'minutes' : this.activeUnit());
   readonly clockMaximum = computed(() => this.clockUnit() === 'hours' ? 23 : 59);
   readonly clockValue = computed(() => this.time()[this.clockUnit()]);
@@ -104,7 +106,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
   /** Retains the control root for detecting focus transitions outside the picker. */
   constructor(private readonly element: ElementRef<HTMLElement>) {
     effect(() => {
-      this.minTime(); this.maxTime(); this.timeFilter();
+      this.minTime(); this.maxTime(); this.timeFilter(); this.precision();
       untracked(() => this.onValidatorChange());
     });
   }
@@ -124,7 +126,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
 
   /** Shares the same daily-time rules between form validation and completion. */
   private validateTimeValue(value: unknown): ValidationErrors | null {
-    return validateTime(value, { minTime: this.minTime(), maxTime: this.maxTime(), timeFilter: this.timeFilter() });
+    return validateTime(value, { precision: this.precision(), minTime: this.minTime(), maxTime: this.maxTime(), timeFilter: this.timeFilter() });
   }
 
   /** Registers Angular Forms' value callback. */
@@ -165,15 +167,19 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
     return Number.isInteger(value) && value > 0 && value <= (unit === 'hours' ? 23 : 59) ? value : 1;
   }
 
+  /** Keeps minutes visible but non-interactive when the control selects exact hours only. */
+  unitDisabled(unit: CimaTimeUnit): boolean { return this.isDisabled() || (this.precision() === 'hours' && unit !== 'hours'); }
+
   /** Selects the whole numeric field so the next digit replaces its current value. */
   selectField(unit: CimaTimeUnit, event: Event): void {
+    if (this.unitDisabled(unit)) return;
     this.activeUnit.set(unit);
     (event.target as HTMLInputElement).select();
   }
 
   /** Clamps typed or pasted values immediately and advances after two digits. */
   typeUnit(unit: CimaTimeUnit, event: Event): void {
-    if (this.isDisabled()) return;
+    if (this.unitDisabled(unit)) return;
     const field = event.target as HTMLInputElement;
     const text = field.value;
     if (!text) return;
@@ -195,7 +201,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
     this.edit(unit, event);
     const next = this.units().indexOf(unit) + 1;
     const nextField = this.element.nativeElement.querySelectorAll<HTMLInputElement>('input')[next];
-    if (nextField) { this.activeUnit.set(this.units()[next]); nextField.focus(); }
+    if (nextField && !this.unitDisabled(this.units()[next])) { this.activeUnit.set(this.units()[next]); nextField.focus(); }
   }
 
   /** Commits a valid keyboard field and restores its display when invalid. */
@@ -204,7 +210,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
     const value = Number(field.value);
     const twelve = unit === 'hours' && this.hourCycle() === '12';
     const maximum = unit === 'hours' ? (twelve ? 12 : 23) : 59;
-    const valid = !this.isDisabled() && !!field.value.trim() && Number.isInteger(value)
+    const valid = !this.unitDisabled(unit) && !!field.value.trim() && Number.isInteger(value)
       && value >= (twelve ? 1 : 0) && value <= maximum;
     if (valid) {
       this.setUnit(unit, twelve ? value % 12 + (this.time().hours >= 12 ? 12 : 0) : value);
@@ -316,8 +322,8 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
 
   /** Advances intermediate units or lets the host confirm the last visible unit. */
   private finishSelection(unit: CimaTimeUnit): void {
-    if (unit === 'hours') this.activeUnit.set('minutes');
-    else if (unit === 'minutes' && this.showSeconds()) this.activeUnit.set('seconds');
+    if (unit === 'hours' && this.precision() !== 'hours') this.activeUnit.set('minutes');
+    else if (unit === 'minutes' && this.secondsVisible()) this.activeUnit.set('seconds');
     else {
       const value = this.value();
       if (isValidTime(value) && !this.timeErrors()) this.selectionComplete.emit({ ...value });
@@ -326,8 +332,8 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
 
   /** Publishes an immutable, valid user selection through binding and Angular Forms. */
   private setUnit(unit: CimaTimeUnit, value: number): void {
-    if (this.isDisabled()) return;
-    const next = { ...this.time(), [unit]: value };
+    if (this.unitDisabled(unit)) return;
+    const next = withTimePrecision({ ...this.time(), [unit]: value }, this.precision());
     if (!isValidTime(next)) return;
     const previous = this.value();
     if (previous && previous.hours === next.hours && previous.minutes === next.minutes && previous.seconds === next.seconds) return;
