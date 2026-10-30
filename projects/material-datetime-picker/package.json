@@ -1,6 +1,6 @@
 {
   "name": "@cima-foundation/material-datetime-picker",
-  "version": "22.0.4",
+  "version": "22.1.0",
   "exports": {
     "./theming": {
       "sass": "./_theming.scss"

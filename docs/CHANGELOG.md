@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 22.1.0 - 2026-10-30
+
 ### Added
 - Datetime range picker with a readonly Material input, range calendar, start/end times, responsive layouts, Angular Forms, and inclusive datetime bounds.
 - Hour-only precision across time, datetime, and range pickers: minutes remain visible and disabled at 00, seconds are hidden, and dial selection completes after hours.
