@@ -1,0 +1,44 @@
+<mat-form-field appearance="fill" (click)="open()" cdkOverlayOrigin #origin="cdkOverlayOrigin">
+  <mat-label>{{ label ?? intl.rangeLabel }}</mat-label>
+  <input #trigger matInput readonly [value]="summary" [disabled]="isDisabled"
+    aria-haspopup="dialog" [attr.aria-expanded]="isOpen()" (click)="open()" (keydown)="onTriggerKeydown($event)">
+  <button type="button" matIconButton matIconSuffix [disabled]="isDisabled" [attr.aria-label]="label ?? intl.rangeLabel"
+    aria-haspopup="dialog" [attr.aria-expanded]="isOpen()" (click)="open()">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+      <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10Zm0-12H5V6h14v2Z" />
+    </svg>
+  </button>
+</mat-form-field>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayPush]="true" [cdkConnectedOverlayViewportMargin]="8"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" (backdropClick)="close()"
+  (overlayKeydown)="onKeydown($event)" (detach)="close()">
+  <div class="panel" [class.vertical]="isVertical" [class.horizontal]="layout === 'horizontal'"
+    role="dialog" aria-modal="true" [attr.aria-label]="label ?? intl.rangeLabel" cdkTrapFocus>
+    <h2>{{ label ?? intl.rangeLabel }}</h2>
+    <ng-template #calendar>
+      <mat-calendar [selected]="dates()" [minDate]="min" [maxDate]="max" (selectedChange)="selectDate($event)" />
+    </ng-template>
+    <div class="range-layout">
+      @if (isVertical) { <ng-container [ngTemplateOutlet]="calendar" /> }
+      <section class="start-time" [attr.aria-label]="startLabel ?? intl.rangeStart">
+        <h3>{{ startLabel ?? intl.rangeStart }}</h3>
+        <p>{{ formatPreview(draftValue.start) }}</p>
+        <cima-time-picker [(value)]="startTime" [timeView]="timeView" [hourCycle]="hourCycle" [hourDial]="hourDial"
+          [showSeconds]="showSeconds" [precision]="precision" [allowViewSwitch]="allowViewSwitch" />
+      </section>
+      @if (!isVertical) { <ng-container [ngTemplateOutlet]="calendar" /> }
+      <section class="end-time" [attr.aria-label]="endLabel ?? intl.rangeEnd">
+        <h3>{{ endLabel ?? intl.rangeEnd }}</h3>
+        <p>{{ formatPreview(draftValue.end) }}</p>
+        <cima-time-picker [(value)]="endTime" [timeView]="timeView" [hourCycle]="hourCycle" [hourDial]="hourDial"
+          [showSeconds]="showSeconds" [precision]="precision" [allowViewSwitch]="allowViewSwitch" />
+      </section>
+    </div>
+    @if (dates().start && dates().end && !canConfirm) { <p class="error" role="alert">{{ invalidRangeLabel ?? intl.invalidRange }}</p> }
+    <div class="actions">
+      <button type="button" matButton (click)="close()">{{ intl.cancel }}</button>
+      <button type="button" matButton [disabled]="!canConfirm" (click)="confirm()">{{ intl.confirm }}</button>
+    </div>
+  </div>
+</ng-template>
