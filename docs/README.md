@@ -17,6 +17,12 @@ Cima Material Datetime Picker is an Angular 22 / Angular Material 22 library in 
 - [Internationalization](internationalization.md): global labels, local overrides, and runtime language switching.
 - [Project status](status.md): implemented features, limitations, accessibility coverage, and remaining work.
 
+## Contributing and maintenance
+
+- [Contributing](../CONTRIBUTING.md): development environment, commands, tests, and dependency notes.
+- [Package preparation and release](releasing.md): package checks, publishing, and recovery.
+- [Demo deployment](deployment.md): documentation assets and GitHub Pages setup.
+
 ## Public controls and reusable content
 
 `CimaTimePicker` is currently the public standalone time-selection component. It can be used inline with Angular Forms or value binding.

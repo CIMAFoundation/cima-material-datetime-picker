@@ -7,14 +7,14 @@
       @if (!first) { <span class="separator" aria-hidden="true">:</span> }
       <div class="field">
         @if (timeView() === 'input') {
-          <input type="number" inputmode="numeric" [attr.aria-label]="label(unit)"
+          <input type="text" inputmode="numeric" pattern="[0-9]*" [attr.cdkFocusInitial]="first ? '' : null" [attr.aria-label]="label(unit)"
             [attr.aria-invalid]="!!timeErrors() || null" [value]="display(unit)" [disabled]="isDisabled()"
             [min]="unit === 'hours' && hourCycle() === '12' ? 1 : 0"
             [max]="unit === 'hours' ? (hourCycle() === '12' ? 12 : 23) : 59"
-            [step]="step(unit)" (change)="edit(unit, $event)" (keydown.enter)="confirmInput(unit, $event)" (focus)="activeUnit.set(unit)">
+            [step]="step(unit)" (input)="typeUnit(unit, $event)" (click)="selectField(unit, $event)" (change)="edit(unit, $event)" (keydown.enter)="confirmInput(unit, $event)" (focus)="selectField(unit, $event)">
           <span class="field-label">{{ label(unit) }}</span>
         } @else {
-          <button type="button" class="digit" [class.active]="clockUnit() === unit"
+          <button type="button" class="digit" [attr.cdkFocusInitial]="first ? '' : null" [class.active]="clockUnit() === unit"
             [disabled]="isDisabled()" [attr.aria-label]="label(unit) + ': ' + display(unit)"
             [attr.aria-pressed]="clockUnit() === unit" (click)="activeUnit.set(unit)">{{ display(unit) }}</button>
         }

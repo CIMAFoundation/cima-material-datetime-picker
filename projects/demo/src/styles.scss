@@ -4,7 +4,7 @@
 html {
   @include mat.theme((
     color: (primary: mat.$violet-palette, theme-type: light),
-    typography: Roboto,
+    typography: (plain-family: 'Roboto, sans-serif', brand-family: 'Roboto, sans-serif'),
     density: 0,
   ));
 }
@@ -14,7 +14,7 @@ $m2-theme: mat.m2-define-light-theme((
     primary: mat.m2-define-palette(mat.$m2-indigo-palette),
     accent: mat.m2-define-palette(mat.$m2-purple-palette),
   ),
-  typography: mat.m2-define-typography-config(),
+  typography: mat.m2-define-typography-config($font-family: 'Roboto, sans-serif'),
   density: 0,
 ));
 
@@ -43,7 +43,7 @@ $m2-dark-theme: mat.m2-define-dark-theme((
     primary: mat.m2-define-palette(mat.$m2-indigo-palette, 200),
     accent: mat.m2-define-palette(mat.$m2-purple-palette, 200),
   ),
-  typography: mat.m2-define-typography-config(),
+  typography: mat.m2-define-typography-config($font-family: 'Roboto, sans-serif'),
   density: 0,
 ));
 

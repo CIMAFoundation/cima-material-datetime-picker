@@ -1,5 +1,6 @@
 import { Component, Injectable, signal, ViewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateAdapter, provideNativeDateAdapter } from '@angular/material/core';
@@ -133,6 +134,26 @@ describe('Public time input and popup', () => {
     expect(cancelled).toHaveBeenCalledTimes(1);
     expect(focus).toHaveBeenCalledTimes(2);
     popup.open(); expect(popup.draftTime()?.hours).toBe(7);
+  });
+
+  it('focuses and selects hours on opening without focusing the editable trigger', async () => {
+    const fixture = TestBed.createComponent(PopupHost); fixture.detectChanges();
+    const { popup } = fixture.componentInstance;
+    // jsdom has no layout, so CDK visibility checks need a focusability substitute.
+    const focusable = vi.spyOn(TestBed.inject(InteractivityChecker), 'isFocusable').mockReturnValue(true);
+    const focus = vi.spyOn(popup.control!.element.nativeElement, 'focus');
+    popup.open(); await fixture.whenStable();
+    const overlay = TestBed.inject(OverlayContainer).getContainerElement();
+    const hours = overlay.querySelector('input')!;
+    expect(focus).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(hours);
+    expect(hours.selectionEnd).toBe(2);
+    popup.close(); await fixture.whenStable();
+    popup.timeView = 'clock';
+    popup.open(); await fixture.whenStable();
+    expect(document.activeElement).toBe(overlay.querySelector('.digit'));
+    expect(overlay.querySelector('input')).toBeNull();
+    focusable.mockRestore();
   });
 
   it('auto-confirms on the final numeric Enter and never on blur', async () => {

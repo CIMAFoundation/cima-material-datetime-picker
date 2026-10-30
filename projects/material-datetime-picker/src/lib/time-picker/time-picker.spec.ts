@@ -111,6 +111,54 @@ describe('CimaTimePicker', () => {
     expect(minute.value).toBe('30');
   });
 
+  it('selects fields and advances through hours, minutes and seconds after two digits', () => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('timeView', 'input');
+    fixture.componentRef.setInput('showSeconds', true);
+    fixture.componentInstance.writeValue({ hours: 7, minutes: 15, seconds: 32 });
+    fixture.detectChanges();
+    const fields = fixture.nativeElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
+    fields[0].focus();
+    fields[0].click();
+    expect(fields[0].selectionStart).toBe(0);
+    expect(fields[0].selectionEnd).toBe(2);
+    fields[0].value = '1';
+    fields[0].dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fields[0].value).toBe('1');
+    expect(document.activeElement).toBe(fields[0]);
+    fields[0].value = '12';
+    fields[0].dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(document.activeElement).toBe(fields[1]);
+    expect(fields[1].selectionEnd).toBe(2);
+    fields[1].value = '45';
+    fields[1].dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(document.activeElement).toBe(fields[2]);
+    expect(fixture.componentInstance.value()).toEqual({ hours: 12, minutes: 45, seconds: 32 });
+  });
+
+  it('clamps overflow and pasted three-digit values immediately without confirming', () => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('timeView', 'input');
+    fixture.componentRef.setInput('hourCycle', '12');
+    fixture.componentInstance.writeValue({ hours: 19, minutes: 15, seconds: 0 });
+    const complete = vi.fn();
+    fixture.componentInstance.selectionComplete.subscribe(complete);
+    fixture.detectChanges();
+    const fields = fixture.nativeElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
+    fields[0].value = '99';
+    fields[0].dispatchEvent(new Event('input'));
+    expect(fields[0].value).toBe('12');
+    expect(fixture.componentInstance.value()?.hours).toBe(12);
+    fields[1].value = '001';
+    fields[1].dispatchEvent(new Event('input'));
+    expect(fields[1].value).toBe('59');
+    expect(fixture.componentInstance.value()?.minutes).toBe(59);
+    expect(complete).not.toHaveBeenCalled();
+  });
+
   it('refreshes global translations at runtime without changing the value', () => {
     const intl = TestBed.inject(CimaTimepickerIntl);
     const fixture = TestBed.createComponent(CimaTimePicker);

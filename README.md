@@ -14,73 +14,60 @@ Choose a combined date and time picker or embed the time picker on its own. Swit
 | --- | --- |
 | <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/datetime-12h-light.png" alt="Light datetime popup showing 02:30 PM with the AM/PM selector" width="294"> | <img src="https://raw.githubusercontent.com/CIMAFoundation/cima-material-datetime-picker/main/docs/images/time-12h-dark.png" alt="Dark time picker showing 07:00 AM with a 12-hour clock dial and AM/PM selector" width="294"> |
 
-## Development
+## Demo
 
-Requires Node.js 22.22.3 or another version supported by Angular 22. Installation has been verified with npm 11.21.1.
+Explore the [live demo](https://CIMAFoundation.github.io/cima-material-datetime-picker/), including interactive examples and documentation in light and dark themes.
 
-```sh
-nvm use
-npx npm@11.21.1 ci
-npm start
+## Installation and first picker
+
+Targets Angular 22, Angular Forms 22, and Angular Material/CDK 22. The major version follows Angular.
+
+For installation in a consuming application, follow the [getting started guide](docs/getting-started.md), which includes building and installing a local package.
+
+Import the standalone component and bind a `CimaTime | null` value:
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { CimaTime, CimaTimePicker } from '@cima-foundation/material-datetime-picker';
+
+@Component({
+  selector: 'app-time-example',
+  imports: [CimaTimePicker],
+  template: `<cima-time-picker [(value)]="time" hourCycle="24" />`,
+})
+export class TimeExample {
+  readonly time = signal<CimaTime | null>({ hours: 9, minutes: 30, seconds: 0 });
+}
 ```
 
-- `npm run build`: build the demo.
-- `npm run build:lib`: build the library package.
-- `npm test -- --watch=false`: run the demo tests with Vitest.
-- `npm run test:lib -- --watch=false`: run the library tests.
+Configure an Angular Material theme using the [theming guide](docs/theming.md). Time-only controls do not require a date adapter.
 
-The library exposes `CimaTimePicker`: numeric input and clock dial views, 12/24-hour display, optional seconds, and Angular Forms integration. The demo compares M2/M3 themes and places the timepicker inside the original Material datepicker's actions area.
+## Features
 
-The demo imports library sources through a TypeScript alias. During development, `npm start` updates both projects without rebuilding the library package after each change.
+- Inline time picker, standalone time-input popup, and combined datetime input, picker, and toggle.
+- Numeric input and clock dial views, 12/24-hour display, optional seconds, and configurable time increments.
+- Angular Forms integration, strict localized manual input, and validation errors.
+- Date, time, and complete datetime bounds and filters, including overnight time windows.
+- Material 2/3 themes and global or local translations.
 
-The demo starts in English and supports switching between English and Italian. It includes global translations, local label overrides, and `ngModel` and Reactive Forms examples. `CimaTimepickerIntl` manages timepicker labels; the calendar retains Material's `DateAdapter` and `MatDatepickerIntl`.
+Datetime controls share a native `Date` value; time-only controls use `{ hours, minutes, seconds }`. Range selection is outside the current scope.
 
-The public datetime input, picker, and toggle share one native Date value with Angular Forms and show the complete date and time in the input. Date-only, recurring-time (including overnight), and complete datetime bounds and filtering are supported. Both external inputs support strict localized manual parsing with Forms errors. The standalone time-input popup, input, and toggle are public controls, with automatic or explicit confirmation. Datetime also exposes writable opened state, pending day selection, and all three time increments. Ranges remain outside the current scope.
+## Documentation
 
-See the [documentation index](docs/README.md) for setup, API reference, integration guides, theming, translations, and the development checklist. The [library README](projects/material-datetime-picker/README.md) provides a short introduction.
+- [Documentation index](docs/README.md)
+- [Getting started](docs/getting-started.md)
+- [API reference](docs/api.md)
+- [Forms and values](docs/forms.md)
+- [Datetime controls](docs/datetime.md)
+- [Time input and popup](docs/popups.md)
+- [Manual input and custom formats](docs/parsing.md)
+- [Theming](docs/theming.md)
+- [Internationalization](docs/internationalization.md)
 
-## Dependencies
+## Contributing and maintenance
 
-TypeScript stays on the 6.0 release line supported by Angular 22. A targeted override sets Vite 8.3.5 for `@angular/build`, which still declares Vite 8.3.0 with known vulnerabilities. Remove the override when Angular Build includes the fix.
+See [Contributing](CONTRIBUTING.md) for local development and tests, [the release guide](docs/releasing.md) for package preparation and publishing, and [the deployment guide](docs/deployment.md) for GitHub Pages setup.
 
-## npm package preparation
+## License
 
-The public package name is `@cima-foundation/material-datetime-picker`, with initial version `22.0.0` aligned to Angular 22. The root workspace remains private; only `dist/material-datetime-picker` is the distributable package.
-
-```sh
-npm run build:lib
-npm pack ./dist/material-datetime-picker --dry-run
-```
-
-These commands build and inspect the package locally without publishing. The package includes the public JavaScript/TypeScript API, the `@cima-foundation/material-datetime-picker/theming` Sass entry point and README with links to the guides. Licensed under MIT; see [LICENSE](LICENSE).
-
-## Releasing to npm
-
-Install GitHub CLI (`gh`), authenticate with `gh auth login` and `npm login`, and commit and push all changes to `main`. The npm account needs publishing access to `@cima-foundation`.
-
-```sh
-npm run release -- --dry-run
-npm run release
-```
-
-The dry run checks prerequisites and proposes a patch version without building or publishing. It fetches remote tags but does not change working files. The release uses the highest stable version from merged `vX.Y.Z` tags, the library manifest, and npm. With no tags, the first proposed release after `22.0.0` is `22.0.1`.
-
-Accept the proposed version or enter a higher stable version. The script runs library and demo tests, builds the library once, and inspects the npm package. After final confirmation, it commits the library version, creates an annotated tag, pushes branch and tag atomically, publishes to npm, and creates a GitHub Release with generated notes. npm may request browser authentication.
-
-Failures before the release commit restore the original manifest. After a commit or publication, the script preserves the release state and prints recovery guidance: inspect Git and npm before retrying, because an npm version cannot be overwritten.
-
-## Demo documentation and GitHub Pages
-
-The demo serves the existing Markdown guides from `docs/`, without a second documentation source. Open `/#/docs/getting-started` or use **Documentation** in the demo navigation. Guides are loaded on demand and share the demo's light/dark theme.
-
-Restart `npm start` after changing the Angular asset configuration so the development server picks up the guides.
-
-```sh
-npm run build:pages
-```
-
-This prepares `dist/demo/browser` for hosting at `/cima-material-datetime-picker/`. Hash routes also support direct links and refreshes on static GitHub Pages hosting. The output includes the Markdown assets. The local build command does not upload or publish anything.
-
-In the repository settings, select **Pages → Build and deployment → Source → GitHub Actions**. The `Deploy demo to GitHub Pages` workflow builds and publishes the demo on every push to `main`; it can also be started manually from the Actions tab.
-
-The published demo is available at https://CIMAFoundation.github.io/cima-material-datetime-picker/.
+Licensed under MIT. See [LICENSE](LICENSE).

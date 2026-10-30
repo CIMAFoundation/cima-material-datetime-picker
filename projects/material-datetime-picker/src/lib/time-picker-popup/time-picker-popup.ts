@@ -124,7 +124,8 @@ export class CimaTimePickerPopup implements OnChanges, OnDestroy {
   open(trigger?: HTMLElement): void {
     if (!this.control || this.disabled || this.control.isDisabled || this.isOpen()) return;
     this.trigger = trigger ?? this.control.element.nativeElement;
-    this.trigger.focus();
+    // Focusing an editable trigger here opens the mobile keyboard before the dial.
+    if (this.trigger !== this.control.element.nativeElement) this.trigger.focus();
     const value = this.control.value;
     this.draftTime.set(isValidTime(value) ? { ...value } : { hours: 0, minutes: 0, seconds: 0 });
     this.isOpen.set(true);

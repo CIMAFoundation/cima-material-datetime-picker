@@ -164,6 +164,31 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
     return Number.isInteger(value) && value > 0 && value <= (unit === 'hours' ? 23 : 59) ? value : 1;
   }
 
+  /** Selects the whole numeric field so the next digit replaces its current value. */
+  selectField(unit: CimaTimeUnit, event: Event): void {
+    this.activeUnit.set(unit);
+    (event.target as HTMLInputElement).select();
+  }
+
+  /** Clamps typed or pasted values immediately and advances after two digits. */
+  typeUnit(unit: CimaTimeUnit, event: Event): void {
+    if (this.isDisabled()) return;
+    const field = event.target as HTMLInputElement;
+    const text = field.value;
+    if (!text) return;
+    if (!/^\d+$/.test(text)) { field.value = this.display(unit); return; }
+    const twelve = unit === 'hours' && this.hourCycle() === '12';
+    const maximum = unit === 'hours' ? (twelve ? 12 : 23) : 59;
+    const value = Number(text);
+    // A leading zero must remain editable so 01–09 can be entered in 12-hour mode.
+    if (text.length < 2 && value <= maximum) return;
+    field.value = String(text.length > 2 ? maximum : Math.max(twelve ? 1 : 0, Math.min(value, maximum)));
+    this.edit(unit, event);
+    const next = this.units().indexOf(unit) + 1;
+    const nextField = this.element.nativeElement.querySelectorAll<HTMLInputElement>('input')[next];
+    if (nextField) { this.activeUnit.set(this.units()[next]); nextField.focus(); }
+  }
+
   /** Commits a valid keyboard field and restores its display when invalid. */
   edit(unit: CimaTimeUnit, event: Event): boolean {
     const field = event.target as HTMLInputElement;
