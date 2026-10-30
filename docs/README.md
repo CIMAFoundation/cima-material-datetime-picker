@@ -19,6 +19,8 @@ Cima Material Datetime Picker is an Angular 22 / Angular Material 22 library in 
 
 ## Contributing and maintenance
 
+- [Changelog](CHANGELOG.md): release history and user-facing changes.
+- [npm package](https://www.npmjs.com/package/@cima-foundation/material-datetime-picker): published versions and installation.
 - [Contributing](../CONTRIBUTING.md): development environment, commands, tests, and dependency notes.
 - [Package preparation and release](releasing.md): package checks, publishing, and recovery.
 - [Demo deployment](deployment.md): documentation assets and GitHub Pages setup.

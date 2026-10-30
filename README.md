@@ -20,6 +20,12 @@ Explore the [live demo](https://CIMAFoundation.github.io/cima-material-datetime-
 
 ## Installation and first picker
 
+Available on [npm](https://www.npmjs.com/package/@cima-foundation/material-datetime-picker).
+
+```sh
+npm install @cima-foundation/material-datetime-picker
+```
+
 Targets Angular 22, Angular Forms 22, and Angular Material/CDK 22. The major version follows Angular.
 
 For installation in a consuming application, follow the [getting started guide](docs/getting-started.md), which includes building and installing a local package.
@@ -55,6 +61,7 @@ Datetime controls share a native `Date` value; time-only controls use `{ hours, 
 ## Documentation
 
 - [Documentation index](docs/README.md)
+- [Changelog](docs/CHANGELOG.md)
 - [Getting started](docs/getting-started.md)
 - [API reference](docs/api.md)
 - [Forms and values](docs/forms.md)

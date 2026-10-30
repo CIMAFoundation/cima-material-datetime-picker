@@ -57,7 +57,7 @@ describe('App', () => {
   it('shows localized parsing errors without losing the text entered in the demo', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    const input: HTMLInputElement = fixture.nativeElement.querySelector('section.featured input');
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('.example input');
     input.value = '02/30/2026 02:30 PM';
     input.dispatchEvent(new Event('input'));
     input.dispatchEvent(new Event('blur'));

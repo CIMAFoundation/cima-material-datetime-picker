@@ -13,6 +13,8 @@ These commands build and inspect the package locally without publishing. The pac
 
 ## Releasing to npm
 
+Before running the release script, update [the changelog](CHANGELOG.md): summarize user-facing changes under the new version and release date, keeping an empty `Unreleased` section for future work.
+
 Install GitHub CLI (`gh`), authenticate with `gh auth login` and `npm login`, and commit and push all changes to `main`. The npm account needs publishing access to `@cima-foundation`.
 
 ```sh

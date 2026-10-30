@@ -1,6 +1,8 @@
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DatePipe, JsonPipe } from '@angular/common';
-import { Component, computed, effect, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,13 +17,14 @@ import { DEMO_CALENDAR_LABELS, DEMO_TIME_LABELS } from './demo-locales';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet, DatePipe, JsonPipe, FormsModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule,
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, DatePipe, JsonPipe, FormsModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule,
     MatInputModule, MatSelectModule, MatSlideToggleModule, CimaTimePicker, CimaDatetimePicker, CimaDatetimePickerInput, CimaDatetimePickerToggle, CimaTimePickerInput, CimaTimePickerPopup, CimaTimePickerToggle],
   providers: [provideNativeDateAdapter()],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
+  readonly compactLayout = toSignal(inject(BreakpointObserver).observe('(max-width: 760px)'));
   readonly darkMode = signal(false);
   readonly theme = signal<'m2' | 'm3'>('m3');
   readonly datetimeView = signal<CimaTimeView>('input');

@@ -16,6 +16,7 @@ export const DOC_PAGES = [
   { slug: 'theming', title: 'Theming' },
   { slug: 'internationalization', title: 'Internationalization' },
   { slug: 'status', title: 'Project status' },
+  { slug: 'CHANGELOG', title: 'Changelog' },
 ];
 
 /** Renders repository guides and keeps their Markdown links inside the demo. */

@@ -33,6 +33,8 @@ Import the standalone `CimaTimePicker` component and `FormsModule` for this exam
 
 ## Installation
 
+Available on [npm](https://www.npmjs.com/package/@cima-foundation/material-datetime-picker).
+
 ```sh
 npm install @cima-foundation/material-datetime-picker@22.0.0
 ```
@@ -57,6 +59,7 @@ See the theming guide for the complete setup. For local testing, follow the gett
 ## Guides
 
 - [Documentation index](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/README.md)
+- [Changelog](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/CHANGELOG.md)
 - [Getting started](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/getting-started.md)
 - [API reference](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/api.md)
 - [Forms and values](https://github.com/CIMAFoundation/cima-material-datetime-picker/blob/main/docs/forms.md)
