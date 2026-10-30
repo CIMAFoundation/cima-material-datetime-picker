@@ -193,7 +193,7 @@
       </div>
       <p class="result">{{ formatTime(popupControl.value) || 'No selection' }}</p>
       <a class="guide-link" routerLink="/docs/popups">Popup guide →</a>
-      <p class="note">Without buttons, selecting the last dial unit or pressing Enter on the last numeric field confirms the time. With buttons, press OK to confirm. Type directly or use Alt+ArrowDown to open the popup.</p>
+      <p class="note">Without buttons, valid edits update the value immediately; selecting the last dial unit or pressing Enter on the last numeric field closes the popup. With buttons, press OK to confirm. Type directly or use Alt+ArrowDown to open the popup.</p>
       <details>
         <summary>View code</summary>
         <pre class="popup-code"><code>{{ popupCode() }}</code></pre>

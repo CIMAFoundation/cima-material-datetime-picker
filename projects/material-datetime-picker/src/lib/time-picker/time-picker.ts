@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, ElementRef, forwardRef, inject, input, linkedSignal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, ElementRef, forwardRef, inject, input, linkedSignal,
   model, output, signal, untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -42,6 +42,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
   readonly timeErrors = computed(() => this.validateTimeValue(this.value()));
   readonly labels = input<Partial<CimaTimeLabels>>({});
   private readonly intl = inject(CimaTimepickerIntl);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly intlChanges = toSignal(this.intl.changes, { equal: () => false });
   readonly resolvedLabels = computed<CimaTimeLabels>(() => {
     this.intlChanges();
@@ -181,7 +182,15 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
     const maximum = unit === 'hours' ? (twelve ? 12 : 23) : 59;
     const value = Number(text);
     // A leading zero must remain editable so 01–09 can be entered in 12-hour mode.
-    if (text.length < 2 && value <= maximum) return;
+    if (text.length < 2 && value <= maximum) {
+      if (!twelve || value > 0) {
+        this.edit(unit, event);
+        // Refresh the formatted binding before restoring the unfinished single digit.
+        this.changeDetector.detectChanges();
+        field.value = text;
+      }
+      return;
+    }
     field.value = String(text.length > 2 ? maximum : Math.max(twelve ? 1 : 0, Math.min(value, maximum)));
     this.edit(unit, event);
     const next = this.units().indexOf(unit) + 1;

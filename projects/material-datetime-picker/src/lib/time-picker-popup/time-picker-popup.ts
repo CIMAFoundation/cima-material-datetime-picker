@@ -28,7 +28,7 @@ let nextId = 0;
           [hourDial]="hourDial" [showSeconds]="showSeconds" [allowViewSwitch]="allowViewSwitch" [labels]="labels"
           [hourStep]="hourStep" [minuteStep]="minuteStep" [secondStep]="secondStep"
           [minTime]="control?.minTime ?? null" [maxTime]="control?.maxTime ?? null" [timeFilter]="control?.timeFilter ?? null"
-          (selectionComplete)="complete($event)" />
+          (timeChange)="applyImmediate($event)" (selectionComplete)="complete($event)" />
         @if (showActions) {
           <div class="actions">
             <button type="button" matButton (click)="close()">{{ intl.cancel }}</button>
@@ -154,6 +154,11 @@ export class CimaTimePickerPopup implements OnChanges, OnDestroy {
     this.control!.commit(value);
     this.finish(true);
     this.confirmed.emit({ ...value });
+  }
+
+  /** Applies valid edits immediately without closing when confirmation buttons are hidden. */
+  applyImmediate(value: CimaTime): void {
+    if (!this.showActions && this.isOpen() && this.canConfirm) this.control!.commit(value);
   }
 
   /** Preserves automatic final-unit confirmation when actions are hidden. */

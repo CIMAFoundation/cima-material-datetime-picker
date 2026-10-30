@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update the time input and form immediately on valid popup edits when confirmation buttons are hidden; keep explicit confirmation when buttons are shown.
+
 ## 22.0.4 - 2026-10-30
 
 - Select the full numeric time field on focus or click and automatically advance to the next field after two digits.

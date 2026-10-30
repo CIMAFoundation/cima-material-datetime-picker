@@ -163,10 +163,45 @@ describe('Public time input and popup', () => {
     const overlay = TestBed.inject(OverlayContainer).getContainerElement();
     const inputs = overlay.querySelectorAll<HTMLInputElement>('input');
     inputs[1].value = '30'; inputs[1].dispatchEvent(new Event('change')); await fixture.whenStable();
-    expect(popup.isOpen()).toBe(true); expect(control.value?.minutes).toBe(0);
+    expect(popup.isOpen()).toBe(true); expect(control.value?.minutes).toBe(30);
     inputs[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     await fixture.whenStable();
     expect(popup.isOpen()).toBe(false); expect(control.value?.minutes).toBe(30);
+  });
+
+  it('updates Forms and the trigger while typing without actions, retaining edits on close', async () => {
+    const fixture = TestBed.createComponent(PopupHost); fixture.detectChanges();
+    const { popup, control, input } = fixture.componentInstance;
+    popup.open(); await fixture.whenStable();
+    const hours = TestBed.inject(OverlayContainer).getContainerElement().querySelector('input')!;
+    hours.value = '9'; hours.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    expect(control.value?.hours).toBe(9);
+    expect(input.element.nativeElement.value).toBe('09:00');
+    expect(hours.value).toBe('9');
+    expect(popup.isOpen()).toBe(true);
+    popup.close();
+    expect(control.value?.hours).toBe(9);
+  });
+
+  it('keeps typed edits provisional with actions and rejects excluded immediate values', async () => {
+    const fixture = TestBed.createComponent(PopupHost); fixture.detectChanges();
+    const host = fixture.componentInstance;
+    host.actions.set(true); fixture.detectChanges();
+    host.popup.open(); await fixture.whenStable();
+    let hours = TestBed.inject(OverlayContainer).getContainerElement().querySelector('input')!;
+    hours.value = '09'; hours.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    expect(host.control.value?.hours).toBe(7);
+    host.popup.close();
+    host.actions.set(false);
+    host.minimum.set({ hours: 10, minutes: 0, seconds: 0 }); fixture.detectChanges();
+    host.popup.open(); await fixture.whenStable();
+    hours = TestBed.inject(OverlayContainer).getContainerElement().querySelector('input')!;
+    hours.value = '09'; hours.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    expect(host.control.value?.hours).toBe(7);
+    expect(host.popup.draftTime()?.hours).toBe(9);
   });
 
   it('waits for seconds when visible and for OK when actions are enabled', async () => {

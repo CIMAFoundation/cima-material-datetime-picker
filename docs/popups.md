@@ -79,13 +79,13 @@ Selector: `cima-time-picker-popup`. Export: `cimaTimePickerPopup`. One input can
 | `restoreFocus` | true | Restores focus to the input or toggle on close |
 | `panelClass` | `[]` | Class name or array applied to the dialog surface |
 
-Methods: `open(trigger?: HTMLElement)`, `close()` (cancel), and `confirm()` (apply only if the draft is valid). `isOpen()` reports state. Outputs: `opened`, `closed`, `cancelled` (void), and `confirmed` (`CimaTime`). `draftTime()` exposes the pending time; `canConfirm` reports whether it satisfies the input's daily rules and disabled state. Each emitted value is copied.
+Methods: `open(trigger?: HTMLElement)`, `close()` (discard pending edits; already applied immediate edits remain), and `confirm()` (apply only if the draft is valid). `isOpen()` reports state. Outputs: `opened`, `closed`, `cancelled` (void), and `confirmed` (`CimaTime`). `draftTime()` exposes the pending time; `canConfirm` reports whether it satisfies the input's daily rules and disabled state. Each emitted value is copied.
 
 The toggle selector is `cima-time-picker-toggle`; its required `[for]` points to the popup. Optional `disabled` defaults to false and combines with popup/input disabling.
 
 ## Confirmation and cancellation
 
-Opening copies the confirmed value into an independent draft. An empty/invalid value starts at midnight without writing to the form. With the default `showActions=false`, completing minutes (or seconds when visible) confirms and closes. Dial dragging completes only on release. Enter on the final dial/numeric unit also completes selection. Numeric blur updates only the draft; Enter on earlier units moves to the next unit.
+Opening copies the confirmed value into an independent draft. An empty/invalid value starts at midnight without writing to the form. With the default `showActions=false`, completing minutes (or seconds when visible) confirms and closes. Dial dragging completes only on release. Enter on the final dial/numeric unit also completes selection. Valid numeric and dial edits immediately update the input and form without closing the popup. Closing retains applied edits. Enter on earlier units moves to the next unit.
 
 With `[showActions]="true"`, selection stays provisional until OK. Cancel, Escape, backdrop clicks, `close()`, reset, external replacement, changed constraints, disabling, and destruction discard the draft. The form becomes touched when a popup session ends. Focus is trapped while open and restored to the trigger after closing unless explicitly disabled.
 
