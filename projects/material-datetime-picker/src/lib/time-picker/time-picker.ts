@@ -29,7 +29,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
   readonly timeView = model<CimaTimeView>('clock');
   readonly allowViewSwitch = input(true);
   readonly hourCycle = input<'12' | '24'>('24');
-  readonly hourDial = input<CimaHourDial>('single-ring');
+  readonly hourDial = input<CimaHourDial>('dual-ring');
   readonly singleRing24 = computed(() => this.hourCycle() === '24' && this.hourDial() === 'single-ring');
   readonly showSeconds = input(false);
   readonly hourStep = input(1);
@@ -80,7 +80,7 @@ export class CimaTimePicker implements ControlValueAccessor, Validator {
       const angle = index * (single ? Math.PI / 12 : Math.PI / 6);
       const inner = !single && index >= 12;
       const radius = inner ? 69 / 256 * 100 : 101 / 256 * 100;
-      return { value, inner, mark: single && index % 2 === 1, angle: angle * 180 / Math.PI, label: hours ? String(value).padStart(this.hourCycle() === '24' ? 2 : 1, '0')
+      return { value, inner, label: hours ? String(value).padStart(this.hourCycle() === '24' ? 2 : 1, '0')
         : String(value).padStart(2, '0'), x: 50 + Math.sin(angle) * radius,
         y: 50 - Math.cos(angle) * radius };
     });

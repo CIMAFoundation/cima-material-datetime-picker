@@ -65,6 +65,7 @@
     <div class="settings-group">
     <span class="settings-label">Time & behavior</span>
     <mat-slide-toggle [checked]="allowViewSwitch()" (change)="allowViewSwitch.set($event.checked)">Allow view switching</mat-slide-toggle>
+    <mat-slide-toggle [checked]="hourCycle() === '24'" (change)="hourCycle.set($event.checked ? '24' : '12')">24-hour format</mat-slide-toggle>
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>24-hour dial layout</mat-label>
       <mat-select [value]="hourDial()" [disabled]="hourCycle() !== '24'" (selectionChange)="hourDial.set($event.value)">
@@ -72,7 +73,6 @@
         <mat-option value="dual-ring">Dual ring (Material)</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-slide-toggle [checked]="hourCycle() === '24'" (change)="hourCycle.set($event.checked ? '24' : '12')">24-hour format</mat-slide-toggle>
     <mat-slide-toggle [checked]="showSeconds()" (change)="showSeconds.set($event.checked)">Seconds</mat-slide-toggle>
     </div>
     <div class="settings-group">

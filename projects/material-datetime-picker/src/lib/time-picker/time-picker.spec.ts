@@ -248,7 +248,7 @@ describe('CimaTimePicker', () => {
 
   it('uses 00–11 outside and 12–23 inside the 24-hour clock', () => {
     const fixture = TestBed.createComponent(CimaTimePicker);
-    fixture.componentRef.setInput('hourDial', 'dual-ring');
+    expect(fixture.componentInstance.hourDial()).toBe('dual-ring');
     const picker = fixture.componentInstance;
     const pointer = dialPointer(picker);
     pointer.tap(182, 100);
@@ -267,20 +267,23 @@ describe('CimaTimePicker', () => {
     expect(picker.clockLabels()[12].value).toBe(12);
   });
 
-  it('defaults to one 24-hour ring with even labels and odd-hour marks', () => {
-    const picker = TestBed.createComponent(CimaTimePicker).componentInstance;
-    expect(picker.hourDial()).toBe('single-ring');
+  it('shows every hour from 00 to 23 on the single ring', () => {
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('hourDial', 'single-ring');
+    const picker = fixture.componentInstance;
     const ticks = picker.clockLabels();
     expect(ticks).toHaveLength(24);
-    expect(ticks.filter(tick => !tick.mark).map(tick => tick.value)).toEqual(
-      [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]);
+    expect(ticks.map(tick => tick.label)).toEqual(
+      Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0')));
     expect(ticks.every(tick => !tick.inner)).toBe(true);
     expect(ticks[6].x).toBeGreaterThan(89);
     expect(ticks[6].y).toBeCloseTo(50);
   });
 
   it('selects all 24 single-ring hours independently of the pointer radius', () => {
-    const picker = TestBed.createComponent(CimaTimePicker).componentInstance;
+    const fixture = TestBed.createComponent(CimaTimePicker);
+    fixture.componentRef.setInput('hourDial', 'single-ring');
+    const picker = fixture.componentInstance;
     const pointer = dialPointer(picker);
     for (let hour = 0; hour < 24; hour++) {
       const angle = hour * Math.PI / 12;
@@ -295,12 +298,13 @@ describe('CimaTimePicker', () => {
   it('keeps the 12-hour dial unchanged when switching the 24-hour layout', () => {
     const fixture = TestBed.createComponent(CimaTimePicker);
     fixture.componentRef.setInput('hourCycle', '12');
+    fixture.componentRef.setInput('hourDial', 'single-ring');
     const picker = fixture.componentInstance;
     const single = picker.clockLabels();
     fixture.componentRef.setInput('hourDial', 'dual-ring');
     expect(picker.clockLabels()).toEqual(single);
     expect(picker.clockLabels()).toHaveLength(12);
-    expect(picker.clockLabels().every(tick => !tick.mark && !tick.inner)).toBe(true);
+    expect(picker.clockLabels().every(tick => !tick.inner)).toBe(true);
   });
 
   it('snaps a minute tap to five while ignoring small pointer jitter', () => {

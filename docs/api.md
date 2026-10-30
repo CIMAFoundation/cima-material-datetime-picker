@@ -58,7 +58,7 @@ The value is `CimaTime | null`: `{ hours, minutes, seconds }`, always using 24-h
 | `timeView` | `CimaTimeView` | `'clock'` | `'input'` or `'clock'`; supports two-way binding |
 | `allowViewSwitch` | `boolean` | `true` | Shows the keyboard/clock switch button |
 | `hourCycle` | `'12' \| '24'` | `'24'` | `'12'` or `'24'`; does not change the value format |
-| `hourDial` | `CimaHourDial` | `'single-ring'` | 24-hour layout: `'single-ring'` or `'dual-ring'`; ignored in 12-hour mode |
+| `hourDial` | `CimaHourDial` | `'dual-ring'` | 24-hour layout: `'single-ring'` or `'dual-ring'`; ignored in 12-hour mode |
 | `showSeconds` | `boolean` | `false` | Shows seconds; hidden seconds are preserved |
 | `hourStep`, `minuteStep`, `secondStep` | `number` | `1` | Control increments; these are not validation constraints |
 | `minTime`, `maxTime` | `CimaTime \| null` | `null` | Inclusive recurring time limits, supporting overnight windows |
@@ -75,7 +75,7 @@ The value is `CimaTime | null`: `{ hours, minutes, seconds }`, always using 24-h
 
 `timeChange` emits a `CimaTime` during user edits. The component does not create OK/Cancel buttons: its container owns draft selection and confirmation. Numeric fields update their draft on `change`; out-of-range edits revert to the previous value. Blur never completes selection. Press Enter on the final numeric field to emit `selectionComplete`; on earlier fields Enter moves focus to the next field. A `null` value displays 00:00 as a starting point without setting the form value until the first edit.
 
-The dial supports pointer input, dragging, arrow keys, Home, and End. The default 24-hour dial has one ring with 24 positions, 15 degrees apart. Even hours are labelled and odd hours have marks; a selected odd hour displays its number as well. Set `hourDial="dual-ring"` to use the Material reference layout with 00–11 outside and 12–23 inside. The single-ring layout is a library alternative, not a Material Design recommendation. Switching layouts preserves the time value; the 12-hour dial is unaffected. Completing an hour selection advances to minutes with an animated hand transition. Motion is disabled when `prefers-reduced-motion` is enabled.
+The dial supports pointer input, dragging, arrow keys, Home, and End. The default 24-hour dial uses the Material reference dual-ring layout with 00–11 outside and 12–23 inside. Set `hourDial="single-ring"` for one ring with 24 positions, 15 degrees apart. All hours from 00 to 23 are labelled. The single-ring layout is a library alternative, not a Material Design recommendation. Switching layouts preserves the time value; the 12-hour dial is unaffected. Completing an hour selection advances to minutes with an animated hand transition. Motion is disabled when `prefers-reduced-motion` is enabled.
 
 With the default minute step, a tap selects the nearest five-minute mark; dragging selects individual minutes. The final pointer position is read on release. Small movements up to eight CSS pixels are treated as tap jitter. An explicit `minuteStep` other than one takes precedence over the default five-minute tap snapping. Values rounded past 59 wrap to zero.
 

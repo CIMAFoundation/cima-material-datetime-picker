@@ -33,7 +33,7 @@ export class CimaDatetimePicker implements AfterViewInit, OnChanges, OnDestroy, 
   @Input() labels: Partial<CimaTimeLabels> = {};
   @Input({ transform: booleanAttribute }) opened = false;
   @Input() hourCycle: '12' | '24' = '24';
-  @Input() hourDial: CimaHourDial = 'single-ring';
+  @Input() hourDial: CimaHourDial = 'dual-ring';
   @Input() timeView: CimaTimeView = 'input';
   @Input({ transform: booleanAttribute }) allowViewSwitch = true;
   @Input({ transform: booleanAttribute }) showSeconds = false;

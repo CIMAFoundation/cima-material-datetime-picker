@@ -49,7 +49,7 @@ let nextId = 0;
 export class CimaTimePickerPopup implements OnChanges, OnDestroy {
   @Input() timeView: CimaTimeView = 'clock';
   @Input() hourCycle: '12' | '24' = '24';
-  @Input() hourDial: CimaHourDial = 'single-ring';
+  @Input() hourDial: CimaHourDial = 'dual-ring';
   @Input() hourStep = 1;
   @Input() minuteStep = 1;
   @Input() secondStep = 1;

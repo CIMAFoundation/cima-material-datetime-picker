@@ -31,7 +31,7 @@ export class App {
   readonly popupTimeView = signal<CimaTimeView>('clock');
   readonly allowViewSwitch = signal(true);
   readonly hourCycle = signal<'12' | '24'>('12');
-  readonly hourDial = signal<CimaHourDial>('single-ring');
+  readonly hourDial = signal<CimaHourDial>('dual-ring');
   readonly showSeconds = signal(false);
   readonly hourStep = signal(1);
   readonly minuteStep = signal(1);
@@ -83,7 +83,7 @@ export class App {
     const defaultView = datetime ? 'input' : 'clock';
     const attributes = [
       this.hourCycle() !== '24' ? `hourCycle="${this.hourCycle()}"` : '',
-      this.hourDial() !== 'single-ring' ? `hourDial="${this.hourDial()}"` : '',
+      this.hourDial() !== 'dual-ring' ? `hourDial="${this.hourDial()}"` : '',
       view !== defaultView ? `timeView="${view}"` : '',
       this.showSeconds() ? '[showSeconds]="true"' : '',
       !this.allowViewSwitch() ? '[allowViewSwitch]="false"' : '',

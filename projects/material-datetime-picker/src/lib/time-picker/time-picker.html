@@ -41,10 +41,9 @@
       </div>
       <span class="pivot" aria-hidden="true"></span>
       @for (tick of clockLabels(); track $index) {
-        <span class="tick" [class.inner]="tick.inner" [class.mark]="tick.mark"
-          [style.rotate]="tick.mark && tick.value !== clockValue() ? tick.angle + 'deg' : null" [class.selected]="clockUnit() === 'hours'
+        <span class="tick" [class.inner]="tick.inner" [class.selected]="clockUnit() === 'hours'
           ? (hourCycle() === '12' ? tick.value % 12 === clockValue() % 12 : tick.value === clockValue())
-          : tick.value === clockValue()" [style.left.%]="tick.x" [style.top.%]="tick.y" aria-hidden="true">{{ tick.mark && tick.value !== clockValue() ? '' : tick.label }}</span>
+          : tick.value === clockValue()" [style.left.%]="tick.x" [style.top.%]="tick.y" aria-hidden="true">{{ tick.label }}</span>
       }
     </div>
   }

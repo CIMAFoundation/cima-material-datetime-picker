@@ -24,7 +24,7 @@ The core timepicker has unit coverage for time values, forms, localization, poin
 This checklist separates implemented features from decisions that still need to become APIs. An option being available on Material's calendar does not mean it is already connected to our datetime control.
 
 - [x] Reusable timepicker content with numeric and clock views.
-- [x] Alternative single-ring 24-hour dial (default), with selectable Material dual-ring layout.
+- [x] Material dual-ring 24-hour dial by default, with an optional single-ring layout.
 - [x] Connected `value`, `timeView`, `allowViewSwitch`, `hourCycle`, `showSeconds`, steps, `disabled`, and `labels` inputs.
 - [x] Exposed `valueChange`, `timeViewChange`, `timeChange`, and `selectionComplete` outputs.
 - [x] Angular Forms integration: Reactive Forms, `ngModel`, reset, disabled, touched, and `invalidTime` validation for invalid incoming values.

@@ -29,7 +29,7 @@ import {
       <input matInput [cimaDatetimePicker]="picker" [formControl]="appointment">
       <cima-datetime-picker-toggle matIconSuffix [for]="picker" />
       <cima-datetime-picker #picker hourCycle="24" timeView="input"
-        hourDial="single-ring" [showSeconds]="false" />
+        hourDial="dual-ring" [showSeconds]="false" />
     </mat-form-field>
   `,
 })
@@ -157,7 +157,7 @@ Selector: `cima-datetime-picker`. Export: `cimaDatetimePicker`.
 | Input | Default | Purpose |
 | --- | --- | --- |
 | `hourCycle` | `'24'` | `'12'` or `'24'` |
-| `hourDial` | `'single-ring'` | 24-hour single/dual ring |
+| `hourDial` | `'dual-ring'` | 24-hour single/dual ring |
 | `timeView` | `'input'` | Initial numeric or clock view |
 | `allowViewSwitch` | `true` | Allows switching numeric/clock views |
 | `showSeconds` | `false` | Displays seconds while preserving hidden seconds |

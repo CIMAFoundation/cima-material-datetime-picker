@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Show all hour labels from 00 to 23 in the single-ring layout.
+
+- Use the Material dual-ring layout by default for 24-hour dials in the library and demo; the single-ring layout remains available through `hourDial`.
+
 - Update the time input and form immediately on valid popup edits when confirmation buttons are hidden; keep explicit confirmation when buttons are shown.
 
 ## 22.0.4 - 2026-10-30

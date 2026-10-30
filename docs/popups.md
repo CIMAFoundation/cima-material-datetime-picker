@@ -70,7 +70,7 @@ Selector: `cima-time-picker-popup`. Export: `cimaTimePickerPopup`. One input can
 | Input | Default | Meaning |
 | --- | --- | --- |
 | `timeView` | `'clock'` | Initial clock or numeric view |
-| `hourCycle`, `hourDial` | `'24'`, `'single-ring'` | Same display options as inline time content |
+| `hourCycle`, `hourDial` | `'24'`, `'dual-ring'` | Same display options as inline time content |
 | `showSeconds`, `allowViewSwitch` | false, true | Visible precision and view switch |
 | `hourStep`, `minuteStep`, `secondStep` | 1 | Interaction increments, not validation constraints |
 | `labels` | `{}` | Partial local `CimaTimeLabels` overrides |

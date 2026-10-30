@@ -24,7 +24,7 @@ Choose a combined date and time picker or embed the time picker on its own. Swit
 <cima-time-picker
   [(ngModel)]="time"
   hourCycle="24"
-  hourDial="single-ring"
+  hourDial="dual-ring"
   [showSeconds]="false"
 />
 ```
