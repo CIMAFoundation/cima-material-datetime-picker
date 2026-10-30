@@ -24,7 +24,8 @@ import { DEMO_CALENDAR_LABELS, DEMO_TIME_LABELS } from './demo-locales';
 export class App {
   readonly darkMode = signal(false);
   readonly theme = signal<'m2' | 'm3'>('m3');
-  readonly timeView = signal<CimaTimeView>('input');
+  readonly datetimeView = signal<CimaTimeView>('input');
+  readonly popupTimeView = signal<CimaTimeView>('clock');
   readonly allowViewSwitch = signal(true);
   readonly hourCycle = signal<'12' | '24'>('12');
   readonly hourDial = signal<CimaHourDial>('single-ring');
@@ -75,10 +76,12 @@ export class App {
 
   /** Shows only display options that differ from the associated library component's defaults. */
   private pickerAttributes(datetime: boolean): string {
+    const view = datetime ? this.datetimeView() : this.popupTimeView();
+    const defaultView = datetime ? 'input' : 'clock';
     const attributes = [
       this.hourCycle() !== '24' ? `hourCycle="${this.hourCycle()}"` : '',
       this.hourDial() !== 'single-ring' ? `hourDial="${this.hourDial()}"` : '',
-      datetime && this.timeView() !== 'input' ? `timeView="${this.timeView()}"` : '',
+      view !== defaultView ? `timeView="${view}"` : '',
       this.showSeconds() ? '[showSeconds]="true"' : '',
       !this.allowViewSwitch() ? '[allowViewSwitch]="false"' : '',
       this.hourStep() !== 1 ? `[hourStep]="${this.hourStep()}"` : '',
