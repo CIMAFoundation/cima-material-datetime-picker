@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 const manifestPath = 'projects/material-datetime-picker/package.json';
+const changelogPath = 'docs/CHANGELOG.md';
 const packageDirectory = './dist/material-datetime-picker';
 const registry = 'https://registry.npmjs.org/';
 const dryRun = process.argv.includes('--dry-run');
@@ -30,6 +31,14 @@ function compareVersions(left, right) {
   return a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 }
 
+/** Moves pending notes into a dated release and retains an empty Unreleased section. */
+function prepareChangelog(source, version) {
+  requireCondition(/^## Unreleased[ \t]*$/m.test(source), 'Add an Unreleased section to docs/CHANGELOG.md before releasing.');
+  requireCondition(!source.includes(`## ${version} -`), `Changelog already contains ${version}.`);
+  const date = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Rome' }).format(new Date());
+  return source.replace(/^## Unreleased[ \t]*\r?\n(?:[ \t]*\r?\n)*/m, `## Unreleased\n\n## ${version} - ${date}\n\n`);
+}
+
 /** Checks prerequisites, prepares the package, then performs the confirmed release. */
 async function release() {
   requireCondition(process.argv.slice(2).every(arg => arg === '--dry-run'),
@@ -46,6 +55,7 @@ async function release() {
   'Push or pull main first: HEAD must match origin/main.');
 
   const originalManifest = readFileSync(manifestPath, 'utf8');
+  const originalChangelog = readFileSync(changelogPath, 'utf8');
   const manifest = JSON.parse(originalManifest);
   const tags = run('git', ['tag', '--merged', 'HEAD', '--sort=-version:refname'], true)
     .split('\n').filter(tag => /^v\d+\.\d+\.\d+$/.test(tag));
@@ -80,22 +90,24 @@ async function release() {
       && compareVersions(version, current) > 0, `Enter a stable version greater than ${current}.`);
     tag = `v${version}`;
     requireCondition(!run('git', ['tag', '--list', tag], true), `${tag} already exists.`);
+    const changelog = prepareChangelog(originalChangelog, version);
     manifest.version = version;
     writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
     manifestChanged = true;
+    writeFileSync(changelogPath, changelog);
     run('npm', ['run', 'test:lib', '--', '--watch=false'], false, { TZ: 'Europe/Rome' });
     run('npm', ['test', '--', '--watch=false']);
     run('npm', ['run', 'build:lib']);
     run('npm', ['pack', packageDirectory, '--dry-run']);
     run('git', ['diff', '--check']);
-    run('git', ['diff', '--', manifestPath]);
+    run('git', ['diff', '--', manifestPath, changelogPath]);
     const answer = await prompt.question(
       `Commit, push ${tag}, publish ${manifest.name}@${version} and create GitHub Release? [y/N]: `);
     if (answer.trim().toLowerCase() !== 'y') {
       console.log('Release cancelled.');
       return;
     }
-    run('git', ['add', '--', manifestPath]);
+    run('git', ['add', '--', manifestPath, changelogPath]);
     staged = true;
     run('git', ['commit', '-m', `chore: release ${tag}`]);
     committed = true;
@@ -119,8 +131,9 @@ async function release() {
     prompt.close();
     if (manifestChanged && !committed) {
       writeFileSync(manifestPath, originalManifest);
-      if (staged) run('git', ['restore', '--staged', '--', manifestPath]);
-      console.log('Original manifest restored. The next release will rebuild the package.');
+      writeFileSync(changelogPath, originalChangelog);
+      if (staged) run('git', ['restore', '--staged', '--', manifestPath, changelogPath]);
+      console.log('Original manifest and changelog restored. The next release will rebuild the package.');
     }
   }
 }

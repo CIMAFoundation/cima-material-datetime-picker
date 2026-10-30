@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Select the full numeric time field on focus or click and automatically advance to the next field after two digits.
+- Clamp typed or pasted time values to the allowed hour, minute, and second ranges immediately.
+- Focus the hours control when opening the time popup and avoid triggering the mobile keyboard before showing the clock dial.
+- Improve the demo's responsive layout and navigation, with independent view controls for datetime and time popups and direct access to npm and the changelog.
+
 ## 22.0.3 - 2026-10-28
 
 - Keep confirmation and cancel buttons visible while scrolling the datetime picker's time controls.

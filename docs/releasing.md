@@ -13,7 +13,7 @@ These commands build and inspect the package locally without publishing. The pac
 
 ## Releasing to npm
 
-Before running the release script, update [the changelog](CHANGELOG.md): summarize user-facing changes under the new version and release date, keeping an empty `Unreleased` section for future work.
+Before running the release script, summarize user-facing changes under `Unreleased` in [the changelog](CHANGELOG.md). The script moves these notes under the confirmed version and the release date (Europe/Rome), keeping an empty `Unreleased` section for future work.
 
 Install GitHub CLI (`gh`), authenticate with `gh auth login` and `npm login`, and commit and push all changes to `main`. The npm account needs publishing access to `@cima-foundation`.
 
@@ -24,9 +24,9 @@ npm run release
 
 The dry run checks prerequisites and proposes a patch version without building or publishing. It fetches remote tags but does not change working files. The release uses the highest stable version from merged `vX.Y.Z` tags, the library manifest, and npm. With no tags, the first proposed release after `22.0.0` is `22.0.1`.
 
-Accept the proposed version or enter a higher stable version. The script runs library and demo tests, builds the library once, and inspects the npm package. After final confirmation, it commits the library version, creates an annotated tag, pushes branch and tag atomically, publishes to npm, and creates a GitHub Release with generated notes. npm may request browser authentication.
+Accept the proposed version or enter a higher stable version. The script runs library and demo tests, builds the library once, and inspects the npm package. After final confirmation, it commits the library version and changelog, creates an annotated tag, pushes branch and tag atomically, publishes to npm, and creates a GitHub Release with generated notes. npm may request browser authentication.
 
-Failures before the release commit restore the original manifest. After a commit or publication, the script preserves the release state and prints recovery guidance: inspect Git and npm before retrying, because an npm version cannot be overwritten.
+Failures before the release commit restore the original manifest and changelog. After a commit or publication, the script preserves the release state and prints recovery guidance: inspect Git and npm before retrying, because an npm version cannot be overwritten.
 
 ---
 
