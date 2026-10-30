@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 22.0.4 - 2026-10-30
+
 - Select the full numeric time field on focus or click and automatically advance to the next field after two digits.
 - Clamp typed or pasted time values to the allowed hour, minute, and second ranges immediately.
 - Focus the hours control when opening the time popup and avoid triggering the mobile keyboard before showing the clock dial.
